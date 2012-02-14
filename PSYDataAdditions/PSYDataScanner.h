@@ -77,3 +77,5 @@ typedef enum _PSYDataScannerLocation
 - (BOOL)scanNullTerminatedString:(NSString **)value withEncoding:(NSStringEncoding)encoding;
 
 @end
+
+NSData *PSYNullTerminatorDataForEncoding(NSStringEncoding encoding);

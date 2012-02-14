@@ -342,32 +342,9 @@
     return YES;
 }
 
-static NSData *_PSYNullTerminatorDataForEncoding(NSStringEncoding encoding)
-{
-    NSUInteger length = 1;
-    
-    switch(encoding)
-    {
-        case NSUTF16StringEncoding             :
-        case NSUTF16LittleEndianStringEncoding :
-        case NSUTF16BigEndianStringEncoding    :
-            length = 2;
-            break;
-        case NSUTF32BigEndianStringEncoding    :
-        case NSUTF32LittleEndianStringEncoding :
-        case NSUTF32StringEncoding             :
-            length = 4;
-            break;
-        default :
-            break;
-    }
-    
-    return [NSData dataWithBytes:(char[4]){ } length:length];
-}
-
 - (BOOL)scanNullTerminatedString:(NSString **)value withEncoding:(NSStringEncoding)encoding;
 {
-    NSData *terminator = _PSYNullTerminatorDataForEncoding(encoding);
+    NSData *terminator = PSYNullTerminatorDataForEncoding(encoding);
     
     NSRange termRange = [_scannedData rangeOfData:terminator options:0 range:NSMakeRange(_scanLocation, [_scannedData length] - _scanLocation)];
     
@@ -387,3 +364,14 @@ static NSData *_PSYNullTerminatorDataForEncoding(NSStringEncoding encoding)
 }
 
 @end
+
+NSData *PSYNullTerminatorDataForEncoding(NSStringEncoding encoding)
+{
+    NSString *nullTerminatorString = [NSString stringWithCharacters:(unichar[]){ 0 } length:1];
+    
+    NSUInteger length = [nullTerminatorString lengthOfBytesUsingEncoding:encoding];
+    
+    static char nullBytes[20] = { 0 };
+    
+    return [NSData dataWithBytesNoCopy:nullBytes length:length freeWhenDone:NO];
+}
