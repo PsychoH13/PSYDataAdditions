@@ -24,6 +24,7 @@
  */
 
 #import "NSMutableData+PSYDataWriter.h"
+#import "PSYDataScanner.h"
 
 #define APPEND_METHOD(endian, size)                                      \
 - (void)append ## endian ## EndianInt ## size:(uint ## size ## _t)value \
@@ -80,6 +81,12 @@ APPEND_METHOD(Big, 64)
     [self appendData:[value dataUsingEncoding:encoding]];
 }
 
+- (void)appendNullTerminatedString:(NSString *)value usingEncoding:(NSStringEncoding)encoding;
+{
+    [self appendData:[value dataUsingEncoding:encoding]];
+    [self appendData:PSYNullTerminatorDataForEncoding(encoding)];
+}
+
 - (void)replaceBytesInRange:(NSRange)range withData:(NSData *)value;
 {
     [self replaceBytesInRange:range withBytes:[value bytes] length:[value length]];
@@ -122,6 +129,14 @@ REPLACE_METHOD(Big, 64)
 - (void)replaceBytesInRange:(NSRange)range withString:(NSString *)value usingEncoding:(NSStringEncoding)encoding;
 {
     [self replaceBytesInRange:range withData:[value dataUsingEncoding:encoding]];
+}
+
+- (void)replaceBytesInRange:(NSRange)range withNullTerminatedString:(NSString *)value usingEncoding:(NSStringEncoding)encoding
+{
+    NSMutableData *data = [PSYNullTerminatorDataForEncoding(encoding) mutableCopy];
+    [data replaceBytesInRange:NSMakeRange(0, 0) withData:[value dataUsingEncoding:encoding]];
+    
+    [self replaceBytesInRange:range withData:data];
 }
 
 @end

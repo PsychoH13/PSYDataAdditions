@@ -46,6 +46,7 @@
 - (void)appendSwappedDouble:(double)value;
 
 - (void)appendString:(NSString *)value usingEncoding:(NSStringEncoding)encoding;
+- (void)appendNullTerminatedString:(NSString *)value usingEncoding:(NSStringEncoding)encoding;
 
 - (void)replaceBytesInRange:(NSRange)range withData:(NSData *)value;
 
@@ -68,5 +69,6 @@
 - (void)replaceBytesInRange:(NSRange)range withSwappedDouble:(double)value;
 
 - (void)replaceBytesInRange:(NSRange)range withString:(NSString *)value usingEncoding:(NSStringEncoding)encoding;
+- (void)replaceBytesInRange:(NSRange)range withNullTerminatedString:(NSString *)value usingEncoding:(NSStringEncoding)encoding;
 
 @end
