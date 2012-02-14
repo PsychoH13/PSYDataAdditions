@@ -74,5 +74,6 @@ typedef enum _PSYDataScannerLocation
 - (BOOL)scanData:(NSData *)data intoData:(NSData **)dataValue;
 - (BOOL)scanUpToData:(NSData *)stopData intoData:(NSData **)dataValue;
 - (BOOL)scanString:(NSString **)value ofLength:(NSUInteger)length usingEncoding:(NSStringEncoding)encoding;
+- (BOOL)scanNullTerminatedString:(NSString **)value withEncoding:(NSStringEncoding)encoding;
 
 @end

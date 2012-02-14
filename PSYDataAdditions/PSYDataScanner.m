@@ -342,4 +342,48 @@
     return YES;
 }
 
+static NSData *_PSYNullTerminatorDataForEncoding(NSStringEncoding encoding)
+{
+    NSUInteger length = 1;
+    
+    switch(encoding)
+    {
+        case NSUTF16StringEncoding             :
+        case NSUTF16LittleEndianStringEncoding :
+        case NSUTF16BigEndianStringEncoding    :
+            length = 2;
+            break;
+        case NSUTF32BigEndianStringEncoding    :
+        case NSUTF32LittleEndianStringEncoding :
+        case NSUTF32StringEncoding             :
+            length = 4;
+            break;
+        default :
+            break;
+    }
+    
+    return [NSData dataWithBytes:(char[4]){ } length:length];
+}
+
+- (BOOL)scanNullTerminatedString:(NSString **)value withEncoding:(NSStringEncoding)encoding;
+{
+    NSData *terminator = _PSYNullTerminatorDataForEncoding(encoding);
+    
+    NSRange termRange = [_scannedData rangeOfData:terminator options:0 range:NSMakeRange(_scanLocation, [_scannedData length] - _scanLocation)];
+    
+    if(termRange.location != NSNotFound)
+    {
+        if(value != NULL)
+        {
+            NSData *subData = [_scannedData subdataWithRange:NSMakeRange(_scanLocation, termRange.location - _scanLocation)];
+            *value = [[[NSString alloc] initWithData:subData encoding:encoding] autorelease];
+        }
+        
+        _scanLocation = NSMaxRange(termRange);
+        return YES;
+    }
+    
+    return NO;
+}
+
 @end
