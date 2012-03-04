@@ -37,6 +37,16 @@
 - (void)appendBigEndianInt32:(uint32_t)value;
 - (void)appendBigEndianInt64:(uint64_t)value;
 
+- (void)appendSInt8:(int8_t)value;
+
+- (void)appendLittleEndianSInt16:(int16_t)value;
+- (void)appendLittleEndianSInt32:(int32_t)value;
+- (void)appendLittleEndianSInt64:(int64_t)value;
+
+- (void)appendBigEndianSInt16:(int16_t)value;
+- (void)appendBigEndianSInt32:(int32_t)value;
+- (void)appendBigEndianSInt64:(int64_t)value;
+
 // These methods append floating point values depending on the architecture of your processor
 // they're usually not appropriate for network transmission
 - (void)appendFloat:(float)value;
@@ -59,6 +69,16 @@
 - (void)replaceBytesInRange:(NSRange)range withBigEndianInt16:(uint16_t)value;
 - (void)replaceBytesInRange:(NSRange)range withBigEndianInt32:(uint32_t)value;
 - (void)replaceBytesInRange:(NSRange)range withBigEndianInt64:(uint64_t)value;
+
+- (void)replaceBytesInRange:(NSRange)range withSInt8:(int8_t)value;
+
+- (void)replaceBytesInRange:(NSRange)range withLittleEndianSInt16:(int16_t)value;
+- (void)replaceBytesInRange:(NSRange)range withLittleEndianSInt32:(int32_t)value;
+- (void)replaceBytesInRange:(NSRange)range withLittleEndianSInt64:(int64_t)value;
+
+- (void)replaceBytesInRange:(NSRange)range withBigEndianSInt16:(int16_t)value;
+- (void)replaceBytesInRange:(NSRange)range withBigEndianSInt32:(int32_t)value;
+- (void)replaceBytesInRange:(NSRange)range withBigEndianSInt64:(int64_t)value;
 
 // These methods append floating point values depending on the architecture of your processor
 // they're usually not appropriate for network transmission

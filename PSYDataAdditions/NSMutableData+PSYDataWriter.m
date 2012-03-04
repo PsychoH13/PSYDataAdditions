@@ -26,25 +26,18 @@
 #import "NSMutableData+PSYDataWriter.h"
 #import "PSYDataScanner.h"
 
-#define APPEND_METHOD(endian, size)                                      \
-- (void)append ## endian ## EndianInt ## size:(uint ## size ## _t)value \
-{                                                                        \
-    value = CFSwapInt ## size ## HostTo ## endian(value);                \
-    [self appendBytes:&value length:sizeof(value)];                      \
-}
-
-#define REPLACE_METHOD(endian, size)                                      \
-- (void)replaceBytesInRange:(NSRange)range with ## endian ## EndianInt ## size:(uint ## size ## _t)value; \
-{                                                                           \
-    value = CFSwapInt ## size ## HostTo ## endian(value);                   \
-    [self replaceBytesInRange:range withBytes:&value length:sizeof(value)]; \
-}
-
 @implementation NSMutableData (PSYDataWriter)
 
 - (void)appendInt8:(uint8_t)value;
 {
     [self appendBytes:&value length:sizeof(value)];
+}
+
+#define APPEND_METHOD(endian, size)                                      \
+- (void)append ## endian ## EndianInt ## size:(uint ## size ## _t)value \
+{                                                                        \
+    value = CFSwapInt ## size ## HostTo ## endian(value);                \
+    [self appendBytes:&value length:sizeof(value)];                      \
 }
 
 APPEND_METHOD(Little, 16)
@@ -53,6 +46,28 @@ APPEND_METHOD(Little, 64)
 APPEND_METHOD(Big, 16)
 APPEND_METHOD(Big, 32)
 APPEND_METHOD(Big, 64)
+
+#undef APPEND_METHOD
+
+- (void)appendSInt8:(int8_t)value;
+{
+    [self appendInt8:*(int8_t *)&value];
+}
+
+#define APPEND_METHOD(endian, size)                                             \
+- (void)append ## endian ## EndianSInt ## size:(int ## size ## _t)value         \
+{                                                                               \
+    [self append ## endian ## EndianInt ## size:*(uint ## size ## _t *)&value]; \
+}
+
+APPEND_METHOD(Little, 16)
+APPEND_METHOD(Little, 32)
+APPEND_METHOD(Little, 64)
+APPEND_METHOD(Big, 16)
+APPEND_METHOD(Big, 32)
+APPEND_METHOD(Big, 64)
+
+#undef APPEND_METHOD
 
 - (void)appendFloat:(float)value;
 {
@@ -97,12 +112,41 @@ APPEND_METHOD(Big, 64)
     [self replaceBytesInRange:range withBytes:&value length:sizeof(value)];
 }
 
+#define REPLACE_METHOD(endian, size)                                      \
+- (void)replaceBytesInRange:(NSRange)range with ## endian ## EndianInt ## size:(uint ## size ## _t)value; \
+{                                                                           \
+    value = CFSwapInt ## size ## HostTo ## endian(value);                   \
+    [self replaceBytesInRange:range withBytes:&value length:sizeof(value)]; \
+}
+
 REPLACE_METHOD(Little, 16)
 REPLACE_METHOD(Little, 32)
 REPLACE_METHOD(Little, 64)
 REPLACE_METHOD(Big, 16)
 REPLACE_METHOD(Big, 32)
 REPLACE_METHOD(Big, 64)
+
+#undef REPLACE_METHOD
+
+- (void)replaceBytesInRange:(NSRange)range withSInt8:(int8_t)value;
+{
+    [self replaceBytesInRange:range withInt8:*(uint8_t *)&value];
+}
+
+#define REPLACE_METHOD(endian, size)                                      \
+- (void)replaceBytesInRange:(NSRange)range with ## endian ## EndianSInt ## size:(int ## size ## _t)value; \
+{                                                                           \
+    [self replaceBytesInRange:range with ## endian ## EndianInt ## size:*(uint ## size ## _t *)&value]; \
+}
+
+REPLACE_METHOD(Little, 16)
+REPLACE_METHOD(Little, 32)
+REPLACE_METHOD(Little, 64)
+REPLACE_METHOD(Big, 16)
+REPLACE_METHOD(Big, 32)
+REPLACE_METHOD(Big, 64)
+
+#undef REPLACE_METHOD
 
 - (void)replaceBytesInRange:(NSRange)range withFloat:(float)value;
 {

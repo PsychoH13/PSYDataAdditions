@@ -31,7 +31,11 @@
 
 + (id)scannerWithData:(NSData *)dataToScan
 {
+#if __has_feature(objc_arc)
+    return [[self alloc] initWithData:dataToScan];
+#else
     return [[[self alloc] initWithData:dataToScan] autorelease];
+#endif
 }
 
 - (id)init
@@ -43,7 +47,9 @@
 {
     if(dataToScan == nil)
     {
+#if !__has_feature(objc_arc)
         [self release];
+#endif
         return nil;
     }
     
@@ -55,11 +61,13 @@
     return self;
 }
 
+#if !__has_feature(objc_arc)
 - (void)dealloc
 {
     [_scannedData release];
     [super dealloc];
 }
+#endif
 
 - (void)setScanLocation:(NSUInteger)value
 {
@@ -194,6 +202,41 @@
     
     _scanLocation += length;
     return YES;
+}
+
+- (BOOL)scanSInt8:(int8_t *)value;
+{
+    return [self scanInt8:(uint8_t *)value];
+}
+
+- (BOOL)scanLittleEndianSInt16:(int16_t *)value;
+{
+    return [self scanLittleEndianInt16:(uint16_t *)value];
+}
+
+- (BOOL)scanLittleEndianSInt32:(int32_t *)value;
+{
+    return [self scanLittleEndianInt32:(uint32_t *)value];
+}
+
+- (BOOL)scanLittleEndianSInt64:(int64_t *)value;
+{
+    return [self scanLittleEndianInt64:(uint64_t *)value];
+}
+
+- (BOOL)scanBigEndianSInt16:(int16_t *)value;
+{
+    return [self scanBigEndianInt16:(uint16_t *)value];
+}
+
+- (BOOL)scanBigEndianSInt32:(int32_t *)value;
+{
+    return [self scanBigEndianInt32:(uint32_t *)value];
+}
+
+- (BOOL)scanBigEndianSInt64:(int64_t *)value;
+{
+    return [self scanBigEndianInt64:(uint64_t *)value];
 }
 
 - (BOOL)scanFloat:(float *)value
@@ -335,7 +378,11 @@
     if(length > 0 && value != NULL)
     {
         NSData *subdata = [_scannedData subdataWithRange:NSMakeRange(_scanLocation, length)];
+#if __has_feature(objc_arc)
+        *value = [[NSString alloc] initWithData:subdata encoding:encoding];
+#else
         *value = [[[NSString alloc] initWithData:subdata encoding:encoding] autorelease];
+#endif
     }
     
     _scanLocation += length;
@@ -353,7 +400,11 @@
         if(value != NULL)
         {
             NSData *subData = [_scannedData subdataWithRange:NSMakeRange(_scanLocation, termRange.location - _scanLocation)];
+#if __has_feature(objc_arc)
+            *value = [[NSString alloc] initWithData:subData encoding:encoding];
+#else
             *value = [[[NSString alloc] initWithData:subData encoding:encoding] autorelease];
+#endif
         }
         
         _scanLocation = NSMaxRange(termRange);
