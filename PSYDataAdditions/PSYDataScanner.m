@@ -297,14 +297,18 @@
 {
     NSUInteger loc = [self scanLocation];
     
-    int8_t shift = 25;
+    int8_t shift;
     uint32_t result = 0;
     
-    while(YES)
+    for(shift = 25; shift >= 0; shift -= 7)
     {
         uint8_t currentByte;
         BOOL success = [self scanInt8:&currentByte];
-        if(!success) break;
+        if(!success)
+        {
+            [self setScanLocation:loc];
+            return NO;
+        }
         
         result |= (((uint32_t)(currentByte & 0x7f)) << shift);
         if((currentByte & 0x80) == 0)
@@ -313,21 +317,18 @@
             if(value != NULL) *value = result;
             return YES;
         }
+    }
+    
+    if(shift < 0)
+    {
+        uint8_t currentByte;
+        BOOL success = [self scanInt8:&currentByte];
         
-        shift -= 7;
-        if(shift < 0)
+        if(success && (currentByte & 0x80) == 0)
         {
-            success = [self scanInt8:&currentByte];
-            if(!success) break;
-            
-            if((currentByte & 0x80) == 0)
-            {
-                result = (result << 3) | ((uint32_t)(currentByte & 0x7f));
-                if(value != NULL) *value = result;
-                return YES;
-            }
-            
-            break;
+            result = (result << 3) | ((uint32_t)(currentByte & 0x7f));
+            if(value != NULL) *value = result;
+            return YES;
         }
     }
     
@@ -342,14 +343,18 @@
 {
     NSUInteger loc = [self scanLocation];
     
-    int8_t shift = 57;
+    int8_t shift;
     uint64_t result = 0;
     
-    while(YES)
+    for(shift = 57; shift >= 0; shift -= 7)
     {
         uint8_t currentByte;
         BOOL success = [self scanInt8:&currentByte];
-        if(!success) break;
+        if(!success)
+        {
+            [self setScanLocation:loc];
+            return NO;
+        }
         
         result |= (((uint64_t)(currentByte & 0x7f)) << shift);
         if((currentByte & 0x80) == 0)
@@ -358,22 +363,20 @@
             if(value != NULL) *value = result;
             return YES;
         }
-        
-        shift -= 7;
-        if(shift < 0)
+    }
+
+    if(shift < 0)
+    {
+        uint8_t currentByte;
+        BOOL success = [self scanInt8:&currentByte];
+        if(success && (currentByte & 0x80) == 0)
         {
-            success = [self scanInt8:&currentByte];
-            if(success && (currentByte & 0x80) == 0)
-            {
-                result = (result << 6) | ((uint64_t)(currentByte & 0x7f));
-                if(value != NULL) *value = result;
-                return YES;
-            }
-            
-            break;
+            result = (result << 6) | ((uint64_t)(currentByte & 0x7f));
+            if(value != NULL) *value = result;
+            return YES;
         }
     }
-    
+
     // If we're here that means scanning failed
     // reset the scan location to what it was before scanning
     [self setScanLocation:loc];
