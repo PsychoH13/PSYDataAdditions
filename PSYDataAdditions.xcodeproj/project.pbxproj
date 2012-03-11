@@ -211,7 +211,7 @@
 		C6F1F03D1469C8F50083A029 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0420;
+				LastUpgradeCheck = 0430;
 				ORGANIZATIONNAME = "NuLayer Inc.";
 			};
 			buildConfigurationList = C6F1F0401469C8F50083A029 /* Build configuration list for PBXProject "PSYDataAdditions" */;
