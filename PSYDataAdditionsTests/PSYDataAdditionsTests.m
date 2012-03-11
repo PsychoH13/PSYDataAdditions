@@ -8,6 +8,7 @@
 
 #import "PSYDataAdditionsTests.h"
 #import "PSYDataScanner.h"
+#import "NSMutableData+PSYDataWriter.h"
 
 @implementation PSYDataAdditionsTests
 
@@ -413,11 +414,16 @@
     PSYDataScanner *scanner = [PSYDataScanner scannerWithData:data];
     uint32_t        scannedValue = 0;
     
+    NSMutableData *writtenData = [NSMutableData dataWithCapacity:2];
+    [writtenData appendLittleEndianVarint32:150];
+    
     STAssertTrueNoThrow([scanner scanLittleEndianVarint32:&scannedValue], @"The scanning of little endian varint 32 should succeed and not throw an exception.");
     
     STAssertEquals([scanner scanLocation], (NSUInteger)2, @"The scan location should have been advanced by 2.");
     
     STAssertEquals(scannedValue, (uint32_t)150, @"The scanned value should be equal to the varint encoded integer in the data.");
+    
+    STAssertEqualObjects(data, writtenData, @"The written data should be equal to the hand encoded data.");
 }
 
 - (void)testScanLittleEndianVarint64
@@ -426,11 +432,16 @@
     PSYDataScanner *scanner = [PSYDataScanner scannerWithData:data];
     uint64_t        scannedValue = 0;
     
+    NSMutableData *writtenData = [NSMutableData dataWithCapacity:2];
+    [writtenData appendLittleEndianVarint64:150];
+    
     STAssertTrueNoThrow([scanner scanLittleEndianVarint64:&scannedValue], @"The scanning of little endian varint 64 should succeed and not throw an exception.");
     
     STAssertEquals([scanner scanLocation], (NSUInteger)2, @"The scan location should have been advanced by 2.");
     
     STAssertEquals(scannedValue, (uint64_t)150, @"The scanned value should be equal to the varint encoded integer in the data.");
+    
+    STAssertEqualObjects(data, writtenData, @"The written data should be equal to the hand encoded data.");
 }
 
 - (void)testScanBigEndianVarint32
@@ -439,11 +450,16 @@
     PSYDataScanner *scanner = [PSYDataScanner scannerWithData:data];
     uint32_t        scannedValue = 0;
     
+    NSMutableData *writtenData = [NSMutableData dataWithCapacity:5];
+    [writtenData appendBigEndianVarint32:150];
+    
     STAssertTrueNoThrow([scanner scanBigEndianVarint32:&scannedValue], @"The scanning of big endian varint 32 should succeed and not throw an exception.");
     
     STAssertEquals([scanner scanLocation], (NSUInteger)5, @"The scan location should have been advanced by 5.");
     
     STAssertEquals(scannedValue, (uint32_t)150, @"The scanned value should be equal to the varint encoded integer in the data.");
+    
+    STAssertEqualObjects(data, writtenData, @"The written data should be equal to the hand encoded data.");
 }
 
 - (void)testScanBigEndianVarint64
@@ -452,11 +468,16 @@
     PSYDataScanner *scanner = [PSYDataScanner scannerWithData:data];
     uint64_t        scannedValue = 0;
     
+    NSMutableData *writtenData = [NSMutableData dataWithCapacity:10];
+    [writtenData appendBigEndianVarint64:150];
+    
     STAssertTrueNoThrow([scanner scanBigEndianVarint64:&scannedValue], @"The scanning of big endian varint 64 should succeed and not throw an exception.");
     
     STAssertEquals([scanner scanLocation], (NSUInteger)10, @"The scan location should have been advanced by 10.");
     
     STAssertEquals(scannedValue, (uint64_t)150, @"The scanned value should be equal to the varint encoded integer in the data.");
+    
+    STAssertEqualObjects(data, writtenData, @"The written data should be equal to the hand encoded data.");
 }
 
 - (void)testScanLittleEndianSVarint32
@@ -465,11 +486,16 @@
     PSYDataScanner *scanner = [PSYDataScanner scannerWithData:data];
     int32_t         scannedValue = 0;
     
+    NSMutableData *writtenData = [NSMutableData dataWithCapacity:5];
+    [writtenData appendLittleEndianSVarint32:-150];
+    
     STAssertTrueNoThrow([scanner scanLittleEndianSVarint32:&scannedValue], @"The scanning of little endian signed varint 32 should succeed and not throw an exception.");
     
     STAssertEquals([scanner scanLocation], (NSUInteger)5, @"The scan location should have been advanced by 5");
     
     STAssertEquals(scannedValue, (int32_t)-150, @"The scanned value should be equal to the varint encoded integer in the data.");
+    
+    STAssertEqualObjects(data, writtenData, @"The written data should be equal to the hand encoded data.");
 }
 
 - (void)testScanLittleEndianSVarint64
@@ -478,11 +504,16 @@
     PSYDataScanner *scanner = [PSYDataScanner scannerWithData:data];
     int64_t         scannedValue = 0;
     
+    NSMutableData *writtenData = [NSMutableData dataWithCapacity:10];
+    [writtenData appendLittleEndianSVarint64:-150];
+    
     STAssertTrueNoThrow([scanner scanLittleEndianSVarint64:&scannedValue], @"The scanning of little endian signed varint 64 should succeed and not throw an exception.");
     
     STAssertEquals([scanner scanLocation], (NSUInteger)10, @"The scan location should have been advanced by 10.");
     
     STAssertEquals(scannedValue, (int64_t)-150, @"The scanned value should be equal to the varint encoded integer in the data.");
+    
+    STAssertEqualObjects(data, writtenData, @"The written data should be equal to the hand encoded data.");
 }
 
 - (void)testScanBigEndianSVarint32
@@ -491,24 +522,34 @@
     PSYDataScanner *scanner = [PSYDataScanner scannerWithData:data];
     int32_t         scannedValue = 0;
     
+    NSMutableData *writtenData = [NSMutableData dataWithCapacity:5];
+    [writtenData appendBigEndianSVarint32:-150];
+    
     STAssertTrueNoThrow([scanner scanBigEndianSVarint32:&scannedValue], @"The scanning of big endian signed varint 32 should succeed and not throw an exception.");
     
     STAssertEquals([scanner scanLocation], (NSUInteger)5, @"The scan location should have been advanced by 5");
     
     STAssertEquals(scannedValue, (int32_t)-150, @"The scanned value should be equal to the varint encoded integer in the data.");
+    
+    STAssertEqualObjects(data, writtenData, @"The written data should be equal to the hand encoded data.");
 }
 
 - (void)testScanBigEndianSVarint64
 {
-    NSData         *data = [NSData dataWithBytes:(uint8_t[10]){0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xEA, 0x00} length:10];
+    NSData         *data = [NSData dataWithBytes:(uint8_t[10]){0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x6A} length:9];
     PSYDataScanner *scanner = [PSYDataScanner scannerWithData:data];
     int64_t         scannedValue = 0;
     
+    NSMutableData *writtenData = [NSMutableData dataWithCapacity:9];
+    [writtenData appendBigEndianSVarint64:-150];
+    
     STAssertTrueNoThrow([scanner scanBigEndianSVarint64:&scannedValue], @"The scanning of big endian signed varint 64 should succeed and not throw an exception.");
     
-    STAssertEquals([scanner scanLocation], (NSUInteger)10, @"The scan location should have been advanced by 10.");
+    STAssertEquals([scanner scanLocation], (NSUInteger)9, @"The scan location should have been advanced by 9.");
     
     STAssertEquals(scannedValue, (int64_t)-150, @"The scanned value should be equal to the varint encoded integer in the data.");
+    
+    STAssertEqualObjects(data, writtenData, @"The written data should be equal to the hand encoded data.");
 }
 
 - (void)testScanLittleEndianZigZagVarint32
@@ -517,11 +558,16 @@
     PSYDataScanner *scanner = [PSYDataScanner scannerWithData:data];
     int32_t         scannedValue = 0;
     
+    NSMutableData *writtenData = [NSMutableData dataWithCapacity:2];
+    [writtenData appendLittleEndianZigZagVarint32:-150];
+    
     STAssertTrueNoThrow([scanner scanLittleEndianZigZagVarint32:&scannedValue], @"The scanning of little endian zig zag varint 32 should succeed and not throw an exception.");
     
     STAssertEquals([scanner scanLocation], (NSUInteger)2, @"The scan location should have been advanced by 2.");
     
     STAssertEquals(scannedValue, (int32_t)-150, @"The scanned value should be equal to the varint encoded integer in the data.");
+    
+    STAssertEqualObjects(data, writtenData, @"The written data should be equal to the hand encoded data.");
 }
 
 - (void)testScanLittleEndianZigZagVarint64
@@ -530,11 +576,16 @@
     PSYDataScanner *scanner = [PSYDataScanner scannerWithData:data];
     int64_t         scannedValue = 0;
     
+    NSMutableData *writtenData = [NSMutableData dataWithCapacity:2];
+    [writtenData appendLittleEndianZigZagVarint64:-150];
+    
     STAssertTrueNoThrow([scanner scanLittleEndianZigZagVarint64:&scannedValue], @"The scanning of little endian zig zag varint 64 should succeed and not throw an exception.");
     
     STAssertEquals([scanner scanLocation], (NSUInteger)2, @"The scan location should have been advanced by 2.");
     
     STAssertEquals(scannedValue, (int64_t)-150, @"The scanned value should be equal to the varint encoded integer in the data.");
+    
+    STAssertEqualObjects(data, writtenData, @"The written data should be equal to the hand encoded data.");
 }
 
 - (void)testScanBigEndianZigZagVarint32
@@ -543,24 +594,34 @@
     PSYDataScanner *scanner = [PSYDataScanner scannerWithData:data];
     int32_t         scannedValue = 0;
     
+    NSMutableData *writtenData = [NSMutableData dataWithCapacity:5];
+    [writtenData appendBigEndianZigZagVarint32:-150];
+    
     STAssertTrueNoThrow([scanner scanBigEndianZigZagVarint32:&scannedValue], @"The scanning of big endian zig zag varint 32 should succeed and not throw an exception.");
     
     STAssertEquals([scanner scanLocation], (NSUInteger)5, @"The scan location should have been advanced by 5");
     
     STAssertEquals(scannedValue, (int32_t)-150, @"The scanned value should be equal to the varint encoded integer in the data.");
+    
+    STAssertEqualObjects(data, writtenData, @"The written data should be equal to the hand encoded data.");
 }
 
 - (void)testScanBigEndianZigZagVarint64
 {
-    NSData         *data = [NSData dataWithBytes:(uint8_t[10]){0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0xC0, 0x80, 0xAB, 0x00} length:10];
+    NSData         *data = [NSData dataWithBytes:(uint8_t[10]){0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0xC0, 0x80, 0x2B} length:9];
     PSYDataScanner *scanner = [PSYDataScanner scannerWithData:data];
     int64_t         scannedValue = 0;
     
+    NSMutableData *writtenData = [NSMutableData dataWithCapacity:9];
+    [writtenData appendBigEndianZigZagVarint64:-150];
+    
     STAssertTrueNoThrow([scanner scanBigEndianZigZagVarint64:&scannedValue], @"The scanning of big endian zig zag varint 64 should succeed and not throw an exception.");
     
-    STAssertEquals([scanner scanLocation], (NSUInteger)10, @"The scan location should have been advanced by 10.");
+    STAssertEquals([scanner scanLocation], (NSUInteger)9, @"The scan location should have been advanced by 9.");
     
     STAssertEquals(scannedValue, (int64_t)-150, @"The scanned value should be equal to the varint encoded integer in the data.");
+    
+    STAssertEqualObjects(data, writtenData, @"The written data should be equal to the hand encoded data.");
 }
 
 - (void)testScanFloatEmptyData

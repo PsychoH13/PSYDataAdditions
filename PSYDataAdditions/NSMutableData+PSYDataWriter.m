@@ -69,18 +69,19 @@ APPEND_METHOD(Big, 64)
 
 #undef APPEND_METHOD
 
-#define APPEND_VARINT_METHOD(endian, size)                                         \
-- (void)append ## endian ## EndianVarint ## size:(uint ## size ## _t)value         \
-{                                                                                  \
-    uint8_t buff[10];                                                              \
-    uint8_t idx = 0;                                                               \
-    value = CFSwapInt ## size ## HostTo ## endian(value);                          \
-    while(value != 0x0)                                                            \
-    {                                                                              \
-        buff[idx] = value & 0xffffff80 ? (0x80 | (value & 0x7f)) : (uint8_t)value; \
-        idx++;                                                                     \
-    }                                                                              \
-    [self appendBytes:buff length:idx];                                            \
+#define APPEND_VARINT_METHOD(endian, size)                                                 \
+- (void)append ## endian ## EndianVarint ## size:(uint ## size ## _t)value                 \
+{                                                                                          \
+    uint8_t buff[10];                                                                      \
+    uint8_t idx = 0;                                                                       \
+    value = CFSwapInt ## size ## HostTo ## endian(value);                                  \
+    while(value != 0x0)                                                                    \
+    {                                                                                      \
+        buff[idx] = value & 0xffffffffffffff80 ? (0x80 | (value & 0x7f)) : (uint8_t)value; \
+        value = value >> 7;                                                                \
+        idx++;                                                                             \
+    }                                                                                      \
+    [self appendBytes:buff length:idx];                                                    \
 }
 
 APPEND_VARINT_METHOD(Little, 32)
