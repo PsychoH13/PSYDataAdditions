@@ -72,6 +72,24 @@ typedef enum _PSYDataScannerLocation
 - (BOOL)scanBigEndianSInt32:(int32_t *)value;
 - (BOOL)scanBigEndianSInt64:(int64_t *)value;
 
+- (BOOL)scanLittleEndianVarint32:(uint32_t *)value;
+- (BOOL)scanLittleEndianVarint64:(uint64_t *)value;
+
+- (BOOL)scanBigEndianVarint32:(uint32_t *)value;
+- (BOOL)scanBigEndianVarint64:(uint64_t *)value;
+
+- (BOOL)scanLittleEndianSVarint32:(int32_t *)value;
+- (BOOL)scanLittleEndianSVarint64:(int64_t *)value;
+
+- (BOOL)scanBigEndianSVarint32:(int32_t *)value;
+- (BOOL)scanBigEndianSVarint64:(int64_t *)value;
+
+- (BOOL)scanLittleEndianZigZagVarint32:(int32_t *)value;
+- (BOOL)scanLittleEndianZigZagVarint64:(int64_t *)value;
+
+- (BOOL)scanBigEndianZigZagVarint32:(int32_t *)value;
+- (BOOL)scanBigEndianZigZagVarint64:(int64_t *)value;
+
 // These methods scan floating point values depending on the architecture of your processor
 // they're usually not appropriate for network transmission
 - (BOOL)scanFloat:(float *)value;
