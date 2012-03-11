@@ -630,6 +630,24 @@
     return YES;
 }
 
+- (BOOL)scanUpToString:(NSString *)stopString intoString:(NSString **)value usingEncoding:(NSStringEncoding)encoding;
+{
+    NSData *stopData = [stopString dataUsingEncoding:encoding];
+    NSData *readData = nil;
+    
+    BOOL success = [self scanUpToData:stopData intoData:value != NULL ? &readData : NULL];
+    if(success)
+    {
+#if __has_feature(objc_arc)
+        if(value != NULL) *value = [[NSString alloc] initWithData:readData encoding:encoding];
+#else
+        if(value != NULL) *value = [[[NSString alloc] initWithData:readData encoding:encoding] autorelease];
+#endif
+    }
+    
+    return success;
+}
+
 - (BOOL)scanNullTerminatedString:(NSString **)value withEncoding:(NSStringEncoding)encoding;
 {
     NSData *terminator = PSYNullTerminatorDataForEncoding(encoding);
