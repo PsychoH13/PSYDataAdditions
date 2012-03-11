@@ -245,7 +245,7 @@
     
     uint32_t result = 0;
     
-    for (uint8_t shift = 0; shift < 32; shift += 7)
+    for(uint8_t shift = 0; shift < 32; shift += 7)
     {
         uint8_t currentByte;
         BOOL success = [self scanInt8:&currentByte];
@@ -271,8 +271,8 @@
     NSUInteger loc = [self scanLocation];
     
     uint64_t result = 0;
-    
-    for (uint8_t shift = 0; shift < 64; shift += 7)
+
+    for(uint8_t shift = 0; shift < 64; shift += 7)
     {
         uint8_t currentByte;
         BOOL success = [self scanInt8:&currentByte];
