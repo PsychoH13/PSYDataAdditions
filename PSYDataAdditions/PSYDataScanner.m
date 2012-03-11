@@ -241,140 +241,150 @@
 
 - (BOOL)scanLittleEndianVarint32:(uint32_t *)value
 {
+    NSUInteger loc = [self scanLocation];
+    
     uint8_t shift = 0;
     uint32_t result = 0;
     
-    while (YES)
+    while(shift > 32)
     {
         uint8_t currentByte;
         BOOL success = [self scanInt8:&currentByte];
-        if (!success)
-        {
-            return NO;
-        }
+        if(!success) break;
         
         result |= (((uint32_t)(currentByte & 0x7f)) << shift);
-        if (!(currentByte & 0x80))
+        if((currentByte & 0x80) == 0)
         {
-            *value = result;
+            if(value != NULL) *value = result;
             return YES;
         }
+        
         shift += 7;
-        if (shift > 32)
-        {
-            return NO;
-        }
     }
+    
+    // If we're here that means scanning failed
+    // reset the scan location to what it was before scanning
+    [self setScanLocation:loc];
+    
+    return NO;
 }
 
 - (BOOL)scanLittleEndianVarint64:(uint64_t *)value
 {
+    NSUInteger loc = [self scanLocation];
+    
     uint8_t shift = 0;
     uint64_t result = 0;
     
-    while (YES)
+    while(shift > 64)
     {
         uint8_t currentByte;
         BOOL success = [self scanInt8:&currentByte];
-        if (!success)
-        {
-            return NO;
-        }
+        if(!success) break;
         
         result |= (((uint64_t)(currentByte & 0x7f)) << shift);
-        if (!(currentByte & 0x80))
+        if((currentByte & 0x80) == 0)
         {
-            *value = result;
+            if(value != NULL) *value = result;
             return YES;
         }
+        
         shift += 7;
-        if (shift > 64)
-        {
-            return NO;
-        }
     }
+    
+    // If we're here that means scanning failed
+    // reset the scan location to what it was before scanning
+    [self setScanLocation:loc];
+    
+    return NO;
 }
 
 - (BOOL)scanBigEndianVarint32:(uint32_t *)value
 {
+    NSUInteger loc = [self scanLocation];
+    
     int8_t shift = 25;
     uint32_t result = 0;
     
-    while (YES)
+    while(YES)
     {
         uint8_t currentByte;
         BOOL success = [self scanInt8:&currentByte];
-        if (!success)
-        {
-            return NO;
-        }
+        if(!success) break;
         
         result |= (((uint32_t)(currentByte & 0x7f)) << shift);
-        if (!(currentByte & 0x80))
+        if((currentByte & 0x80) == 0)
         {
             result = result >> shift;
-            *value = result;
+            if(value != NULL) *value = result;
             return YES;
         }
+        
         shift -= 7;
-        if (shift < 0)
+        if(shift < 0)
         {
             success = [self scanInt8:&currentByte];
-            if (!success)
-            {
-                return NO;
-            }
-            if (!(currentByte & 0x80))
+            if(!success) break;
+            
+            if((currentByte & 0x80) == 0)
             {
                 result = (result << 3) | ((uint32_t)(currentByte & 0x7f));
-                *value = result;
+                if(value != NULL) *value = result;
                 return YES;
             }
             
-            return NO;
+            break;
         }
     }
+    
+    // If we're here that means scanning failed
+    // reset the scan location to what it was before scanning
+    [self setScanLocation:loc];
+    
+    return NO;
 }
 
 - (BOOL)scanBigEndianVarint64:(uint64_t *)value
 {
+    NSUInteger loc = [self scanLocation];
+    
     int8_t shift = 57;
     uint64_t result = 0;
     
-    while (YES)
+    while(YES)
     {
         uint8_t currentByte;
         BOOL success = [self scanInt8:&currentByte];
-        if (!success)
-        {
-            return NO;
-        }
+        if(!success) break;
         
         result |= (((uint64_t)(currentByte & 0x7f)) << shift);
-        if (!(currentByte & 0x80))
+        if((currentByte & 0x80) == 0)
         {
             result = result >> shift;
-            *value = result;
+            if(value != NULL) *value = result;
             return YES;
         }
+        
         shift -= 7;
-        if (shift < 0)
+        if(shift < 0)
         {
             success = [self scanInt8:&currentByte];
-            if (!success)
-            {
-                return NO;
-            }
-            if (!(currentByte & 0x80))
+            if(success && (currentByte & 0x80) == 0)
             {
                 result = (result << 6) | ((uint64_t)(currentByte & 0x7f));
-                *value = result;
+                if(value != NULL) *value = result;
                 return YES;
             }
             
-            return NO;
+            break;
         }
     }
+    
+    // If we're here that means scanning failed
+    // reset the scan location to what it was before scanning
+    [self setScanLocation:loc];
+    
+    return NO;
 }
 
 - (BOOL)scanLittleEndianSVarint32:(int32_t *)value
@@ -401,20 +411,18 @@
 {
     uint32_t zzEnc;
     BOOL success = [self scanLittleEndianVarint32:&zzEnc];
-    if (!success)
+    if(!success) return NO;
+    
+    if(value != NULL)
     {
-        return NO;
+        if(zzEnc & 0x1)
+        {
+            uint32_t r = (zzEnc >> 1) ^ 0xFFFFFFFF;
+            *value = *(int32_t *)&r;
+        }
+        else *value = (int32_t)zzEnc >> 1;
     }
     
-    if (zzEnc & 0x1)
-    {
-        uint32_t r = (zzEnc >> 1) ^ 0xffffffff;
-        *value = *(int32_t *)&r;
-    }
-    else
-    {
-        *value = (int32_t)zzEnc >> 1;
-    }
     return YES;
 }
 
@@ -422,20 +430,18 @@
 {
     uint64_t zzEnc;
     BOOL success = [self scanLittleEndianVarint64:&zzEnc];
-    if (!success)
+    if(!success) return NO;
+    
+    if(value != NULL)
     {
-        return NO;
+        if(zzEnc & 0x1)
+        {
+            uint64_t r = (zzEnc >> 1) ^ 0xFFFFFFFFFFFFFFFF;
+            *value = *(int64_t *)&r;
+        }
+        else *value = (int64_t)zzEnc >> 1;
     }
     
-    if (zzEnc & 0x1)
-    {
-        uint64_t r = (zzEnc >> 1) ^ 0xffffffffffffffff;
-        *value = *(int64_t *)&r;
-    }
-    else
-    {
-        *value = (int64_t)zzEnc >>1;
-    }
     return YES;
 }
 
@@ -443,20 +449,18 @@
 {
     uint32_t zzEnc;
     BOOL success = [self scanBigEndianVarint32:&zzEnc];
-    if (!success)
+    if(!success) return NO;
+    
+    if(value != NULL)
     {
-        return NO;
+        if (zzEnc & 0x1)
+        {
+            uint32_t r = (zzEnc >> 1) ^ 0xFFFFFFFF;
+            *value = *(int32_t *)&r;
+        }
+        else *value = (int32_t)zzEnc >> 1;
     }
     
-    if (zzEnc & 0x1)
-    {
-        uint32_t r = (zzEnc >> 1) ^ 0xffffffff;
-        *value = *(int32_t *)&r;
-    }
-    else
-    {
-        *value = (int32_t)zzEnc >> 1;
-    }
     return YES;
 }
 
@@ -464,20 +468,18 @@
 {
     uint64_t zzEnc;
     BOOL success = [self scanBigEndianVarint64:&zzEnc];
-    if (!success)
+    if(!success) return NO;
+    
+    if(value != NULL)
     {
-        return NO;
+        if(zzEnc & 0x1)
+        {
+            uint64_t r = (zzEnc >> 1) ^ 0xFFFFFFFFFFFFFFFF;
+            *value = *(int64_t *)&r;
+        }
+        else *value = (int64_t)zzEnc >> 1;
     }
     
-    if (zzEnc & 0x1)
-    {
-        uint64_t r = (zzEnc >> 1) ^ 0xffffffffffffffff;
-        *value = *(int64_t *)&r;
-    }
-    else
-    {
-        *value = (int64_t)zzEnc >>1;
-    }
     return YES;
 }
 
