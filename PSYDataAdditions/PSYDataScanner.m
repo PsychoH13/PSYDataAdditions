@@ -239,6 +239,248 @@
     return [self scanBigEndianInt64:(uint64_t *)value];
 }
 
+- (BOOL)scanLittleEndianVarint32:(uint32_t *)value
+{
+    uint8_t shift = 0;
+    uint32_t result = 0;
+    
+    while (YES)
+    {
+        uint8_t currentByte;
+        BOOL success = [self scanInt8:&currentByte];
+        if (!success)
+        {
+            return NO;
+        }
+        
+        result |= (((uint32_t)(currentByte & 0x7f)) << shift);
+        if (!(currentByte & 0x80))
+        {
+            *value = result;
+            return YES;
+        }
+        shift += 7;
+        if (shift > 32)
+        {
+            return NO;
+        }
+    }
+}
+
+- (BOOL)scanLittleEndianVarint64:(uint64_t *)value
+{
+    uint8_t shift = 0;
+    uint64_t result = 0;
+    
+    while (YES)
+    {
+        uint8_t currentByte;
+        BOOL success = [self scanInt8:&currentByte];
+        if (!success)
+        {
+            return NO;
+        }
+        
+        result |= (((uint64_t)(currentByte & 0x7f)) << shift);
+        if (!(currentByte & 0x80))
+        {
+            *value = result;
+            return YES;
+        }
+        shift += 7;
+        if (shift > 64)
+        {
+            return NO;
+        }
+    }
+}
+
+- (BOOL)scanBigEndianVarint32:(uint32_t *)value
+{
+    int8_t shift = 25;
+    uint32_t result = 0;
+    
+    while (YES)
+    {
+        uint8_t currentByte;
+        BOOL success = [self scanInt8:&currentByte];
+        if (!success)
+        {
+            return NO;
+        }
+        
+        result |= (((uint32_t)(currentByte & 0x7f)) << shift);
+        if (!(currentByte & 0x80))
+        {
+            result = result >> shift;
+            *value = result;
+            return YES;
+        }
+        shift -= 7;
+        if (shift < 0)
+        {
+            success = [self scanInt8:&currentByte];
+            if (!success)
+            {
+                return NO;
+            }
+            if (!(currentByte & 0x80))
+            {
+                result = (result << 3) | ((uint32_t)(currentByte & 0x7f));
+                *value = result;
+                return YES;
+            }
+            
+            return NO;
+        }
+    }
+}
+
+- (BOOL)scanBigEndianVarint64:(uint64_t *)value
+{
+    int8_t shift = 57;
+    uint64_t result = 0;
+    
+    while (YES)
+    {
+        uint8_t currentByte;
+        BOOL success = [self scanInt8:&currentByte];
+        if (!success)
+        {
+            return NO;
+        }
+        
+        result |= (((uint64_t)(currentByte & 0x7f)) << shift);
+        if (!(currentByte & 0x80))
+        {
+            result = result >> shift;
+            *value = result;
+            return YES;
+        }
+        shift -= 7;
+        if (shift < 0)
+        {
+            success = [self scanInt8:&currentByte];
+            if (!success)
+            {
+                return NO;
+            }
+            if (!(currentByte & 0x80))
+            {
+                result = (result << 6) | ((uint64_t)(currentByte & 0x7f));
+                *value = result;
+                return YES;
+            }
+            
+            return NO;
+        }
+    }
+}
+
+- (BOOL)scanLittleEndianSVarint32:(int32_t *)value
+{
+    return [self scanLittleEndianVarint32:(uint32_t *)value];
+}
+
+- (BOOL)scanLittleEndianSVarint64:(int64_t *)value
+{
+    return [self scanLittleEndianVarint64:(uint64_t *)value];
+}
+
+- (BOOL)scanBigEndianSVarint32:(int32_t *)value
+{
+    return [self scanBigEndianVarint32:(uint32_t *)value];
+}
+
+- (BOOL)scanBigEndianSVarint64:(int64_t *)value
+{
+    return [self scanBigEndianVarint64:(uint64_t *)value];
+}
+
+- (BOOL)scanLittleEndianZigZagVarint32:(int32_t *)value
+{
+    uint32_t zzEnc;
+    BOOL success = [self scanLittleEndianVarint32:&zzEnc];
+    if (!success)
+    {
+        return NO;
+    }
+    
+    if (zzEnc & 0x1)
+    {
+        uint32_t r = (zzEnc >> 1) ^ 0xffffffff;
+        *value = *(int32_t *)&r;
+    }
+    else
+    {
+        *value = (int32_t)zzEnc >> 1;
+    }
+    return YES;
+}
+
+- (BOOL)scanLittleEndianZigZagVarint64:(int64_t *)value
+{
+    uint64_t zzEnc;
+    BOOL success = [self scanLittleEndianVarint64:&zzEnc];
+    if (!success)
+    {
+        return NO;
+    }
+    
+    if (zzEnc & 0x1)
+    {
+        uint64_t r = (zzEnc >> 1) ^ 0xffffffffffffffff;
+        *value = *(int64_t *)&r;
+    }
+    else
+    {
+        *value = (int64_t)zzEnc >>1;
+    }
+    return YES;
+}
+
+- (BOOL)scanBigEndianZigZagVarint32:(int32_t *)value
+{
+    uint32_t zzEnc;
+    BOOL success = [self scanBigEndianVarint32:&zzEnc];
+    if (!success)
+    {
+        return NO;
+    }
+    
+    if (zzEnc & 0x1)
+    {
+        uint32_t r = (zzEnc >> 1) ^ 0xffffffff;
+        *value = *(int32_t *)&r;
+    }
+    else
+    {
+        *value = (int32_t)zzEnc >> 1;
+    }
+    return YES;
+}
+
+- (BOOL)scanBigEndianZigZagVarint64:(int64_t *)value
+{
+    uint64_t zzEnc;
+    BOOL success = [self scanBigEndianVarint64:&zzEnc];
+    if (!success)
+    {
+        return NO;
+    }
+    
+    if (zzEnc & 0x1)
+    {
+        uint64_t r = (zzEnc >> 1) ^ 0xffffffffffffffff;
+        *value = *(int64_t *)&r;
+    }
+    else
+    {
+        *value = (int64_t)zzEnc >>1;
+    }
+    return YES;
+}
+
 - (BOOL)scanFloat:(float *)value
 {
     NSUInteger length = sizeof(*value);
