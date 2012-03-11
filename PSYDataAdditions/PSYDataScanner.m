@@ -243,10 +243,9 @@
 {
     NSUInteger loc = [self scanLocation];
     
-    uint8_t shift = 0;
     uint32_t result = 0;
     
-    while(shift > 32)
+    for(uint8_t shift = 0; shift < 32; shift += 7)
     {
         uint8_t currentByte;
         BOOL success = [self scanInt8:&currentByte];
@@ -258,8 +257,6 @@
             if(value != NULL) *value = result;
             return YES;
         }
-        
-        shift += 7;
     }
     
     // If we're here that means scanning failed
@@ -273,10 +270,9 @@
 {
     NSUInteger loc = [self scanLocation];
     
-    uint8_t shift = 0;
     uint64_t result = 0;
-    
-    while(shift > 64)
+
+    for(uint8_t shift = 0; shift < 64; shift += 7)
     {
         uint8_t currentByte;
         BOOL success = [self scanInt8:&currentByte];
@@ -288,8 +284,6 @@
             if(value != NULL) *value = result;
             return YES;
         }
-        
-        shift += 7;
     }
     
     // If we're here that means scanning failed
