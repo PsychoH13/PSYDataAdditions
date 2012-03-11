@@ -69,6 +69,54 @@ APPEND_METHOD(Big, 64)
 
 #undef APPEND_METHOD
 
+#define APPEND_VARINT_METHOD(endian, size)                                         \
+- (void)append ## endian ## EndianVarint ## size:(uint ## size ## _t)value         \
+{                                                                                  \
+    uint8_t buff[10];                                                              \
+    uint8_t idx = 0;                                                               \
+    value = CFSwapInt ## size ## HostTo ## endian(value);                          \
+    while(value != 0x0)                                                            \
+    {                                                                              \
+        buff[idx] = value & 0xffffff80 ? (0x80 | (value & 0x7f)) : (uint8_t)value; \
+        idx++;                                                                     \
+    }                                                                              \
+    [self appendBytes:buff length:idx];                                            \
+}
+
+APPEND_VARINT_METHOD(Little, 32)
+APPEND_VARINT_METHOD(Little, 64)
+APPEND_VARINT_METHOD(Big, 32)
+APPEND_VARINT_METHOD(Big, 64)
+
+#undef APPEND_VARINT_METHOD
+
+#define APPEND_VARINT_METHOD(endian, size)                                       \
+- (void)append ## endian ## EndianSVarint ## size:(int ## size ## _t)value       \
+{                                                                                \
+    [self append ##endian ##EndianVarint ## size:*(uint ## size ## _t *)&value]; \
+}
+
+APPEND_VARINT_METHOD(Little, 32)
+APPEND_VARINT_METHOD(Little, 64)
+APPEND_VARINT_METHOD(Big, 32)
+APPEND_VARINT_METHOD(Big, 64)
+
+#undef APPEND_VARINT_METHOD
+
+#define APPEND_VARINT_METHOD(endian, size)                                       \
+- (void)append ## endian ## EndianZigZagVarint ## size:(int ## size ## _t)value  \
+{                                                                                \
+    value = (value << 1) ^ (value >> (size - 1));                                 \
+    [self append ##endian ##EndianVarint ## size:*(uint ## size ## _t *)&value]; \
+}
+
+APPEND_VARINT_METHOD(Little, 32)
+APPEND_VARINT_METHOD(Little, 64)
+APPEND_VARINT_METHOD(Big, 32)
+APPEND_VARINT_METHOD(Big, 64)
+
+#undef APPEND_VARINT_METHOD
+
 - (void)appendFloat:(float)value;
 {
     [self appendBytes:&value length:sizeof(value)];
