@@ -254,7 +254,7 @@
         result |= (((uint32_t)(currentByte & 0x7f)) << shift);
         if((currentByte & 0x80) == 0)
         {
-            if(value != NULL) *value = result;
+            if(value != NULL) *value = CFSwapInt32LittleToHost(result);
             return YES;
         }
     }
@@ -281,7 +281,7 @@
         result |= (((uint64_t)(currentByte & 0x7f)) << shift);
         if((currentByte & 0x80) == 0)
         {
-            if(value != NULL) *value = result;
+            if(value != NULL) *value = CFSwapInt64LittleToHost(result);
             return YES;
         }
     }
@@ -297,37 +297,18 @@
 {
     NSUInteger loc = [self scanLocation];
     
-    int8_t shift;
     uint32_t result = 0;
     
-    for(shift = 25; shift >= 0; shift -= 7)
+    for(uint8_t shift = 0; shift < 32; shift += 7)
     {
         uint8_t currentByte;
         BOOL success = [self scanInt8:&currentByte];
-        if(!success)
-        {
-            [self setScanLocation:loc];
-            return NO;
-        }
+        if(!success) break;
         
         result |= (((uint32_t)(currentByte & 0x7f)) << shift);
         if((currentByte & 0x80) == 0)
         {
-            result = result >> shift;
-            if(value != NULL) *value = result;
-            return YES;
-        }
-    }
-    
-    if(shift < 0)
-    {
-        uint8_t currentByte;
-        BOOL success = [self scanInt8:&currentByte];
-        
-        if(success && (currentByte & 0x80) == 0)
-        {
-            result = (result << 3) | ((uint32_t)(currentByte & 0x7f));
-            if(value != NULL) *value = result;
+            if(value != NULL) *value = CFSwapInt32BigToHost(result);
             return YES;
         }
     }
@@ -343,40 +324,22 @@
 {
     NSUInteger loc = [self scanLocation];
     
-    int8_t shift;
     uint64_t result = 0;
     
-    for(shift = 57; shift >= 0; shift -= 7)
+    for(uint8_t shift = 0; shift < 64; shift += 7)
     {
         uint8_t currentByte;
         BOOL success = [self scanInt8:&currentByte];
-        if(!success)
-        {
-            [self setScanLocation:loc];
-            return NO;
-        }
+        if(!success) break;
         
         result |= (((uint64_t)(currentByte & 0x7f)) << shift);
         if((currentByte & 0x80) == 0)
         {
-            result = result >> shift;
-            if(value != NULL) *value = result;
+            if(value != NULL) *value = CFSwapInt64BigToHost(result);
             return YES;
         }
     }
-
-    if(shift < 0)
-    {
-        uint8_t currentByte;
-        BOOL success = [self scanInt8:&currentByte];
-        if(success && (currentByte & 0x80) == 0)
-        {
-            result = (result << 6) | ((uint64_t)(currentByte & 0x7f));
-            if(value != NULL) *value = result;
-            return YES;
-        }
-    }
-
+    
     // If we're here that means scanning failed
     // reset the scan location to what it was before scanning
     [self setScanLocation:loc];

@@ -47,6 +47,24 @@
 - (void)appendBigEndianSInt32:(int32_t)value;
 - (void)appendBigEndianSInt64:(int64_t)value;
 
+- (void)appendLittleEndianVarint32:(uint32_t)value;
+- (void)appendLittleEndianVarint64:(uint64_t)value;
+
+- (void)appendBigEndianVarint32:(uint32_t)value;
+- (void)appendBigEndianVarint64:(uint64_t)value;
+
+- (void)appendLittleEndianSVarint32:(int32_t)value;
+- (void)appendLittleEndianSVarint64:(int64_t)value;
+
+- (void)appendBigEndianSVarint32:(int32_t)value;
+- (void)appendBigEndianSVarint64:(int64_t)value;
+
+- (void)appendLittleEndianZigZagVarint32:(int32_t)value;
+- (void)appendLittleEndianZigZagVarint64:(int64_t)value;
+
+- (void)appendBigEndianZigZagVarint32:(int32_t)value;
+- (void)appendBigEndianZigZagVarint64:(int64_t)value;
+
 // These methods append floating point values depending on the architecture of your processor
 // they're usually not appropriate for network transmission
 - (void)appendFloat:(float)value;
