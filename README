@@ -1,1 +1,0 @@
-This Cocoa framework adds a class to scan NSData objects with methods that conveniently scan common types, as well as a category to NSMutableData that writes common type bytes.
