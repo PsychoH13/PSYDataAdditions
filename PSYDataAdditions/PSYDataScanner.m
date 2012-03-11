@@ -25,9 +25,17 @@
 
 #import "PSYDataScanner.h"
 
+@interface _PSYDataScanner : PSYDataScanner
+{
+@private
+    NSData             *_scannedData;
+    unsigned long long  _dataLength;
+    unsigned long long  _scanLocation;
+}
+@end
 
 @implementation PSYDataScanner
-@synthesize data = _scannedData, scanLocation = _scanLocation;
+@synthesize data = _scannedData, scanLocation = _scanLocation, dataLength = _dataLength;
 
 + (id)scannerWithData:(NSData *)dataToScan
 {
@@ -83,13 +91,13 @@
     
     switch(startPoint)
     {
-        case PSYDataScannerLocationCurrent : computed = relativeLocation + [self scanLocation]; break;
-        case PSYDataScannerLocationEnd     : computed = _dataLength      + relativeLocation;    break;
+        case PSYDataScannerLocationCurrent : computed = relativeLocation  + [self scanLocation]; break;
+        case PSYDataScannerLocationEnd     : computed = [self dataLength] + relativeLocation;    break;
         case PSYDataScannerLocationBegin   : 
-        default                            : computed = relativeLocation;                       break;
+        default                            : computed = relativeLocation;                        break;
     }
     
-    if(computed >= 0 && computed <= _dataLength)
+    if(computed >= 0 && computed <= [self dataLength])
     {
         [self setScanLocation:computed];
         return YES;
@@ -100,107 +108,114 @@
 
 - (BOOL)isAtEnd;
 {
-    return _scanLocation >= _dataLength;
+    return [self scanLocation] >= [self dataLength];
 }
 
 - (BOOL)scanInt8:(uint8_t *)value
 {
     unsigned long long length = sizeof(*value);
-    if(_scanLocation + length > _dataLength) return NO;
+    unsigned long long loc    = [self scanLocation];
+    if(loc + length > [self dataLength]) return NO;
     
-    if(value != NULL) [_scannedData getBytes:value range:NSMakeRange(_scanLocation, length)];
+    if(value != NULL) [[self data] getBytes:value range:NSMakeRange(loc, length)];
     
-    _scanLocation += length;
+    [self setScanLocation:loc + length];
     return YES;
 }
 
 - (BOOL)scanLittleEndianInt16:(uint16_t *)value
 {
     unsigned long long length = sizeof(*value);
-    if(_scanLocation + length > _dataLength) return NO;
+    unsigned long long loc    = [self scanLocation];
+    if(loc + length > [self dataLength]) return NO;
     
     if(value != NULL)
     {
-        [_scannedData getBytes:value range:NSMakeRange(_scanLocation, length)];
+        [[self data] getBytes:value range:NSMakeRange(loc, length)];
         *value = CFSwapInt16LittleToHost(*value);
     }
     
-    _scanLocation += length;
+    [self setScanLocation:loc + length];
     return YES;
 }
 
 - (BOOL)scanLittleEndianInt32:(uint32_t *)value
 {
     unsigned long long length = sizeof(*value);
-    if(_scanLocation + length > _dataLength) return NO;
+    unsigned long long loc    = [self scanLocation];
+    if(loc + length > [self dataLength]) return NO;
     
     if(value != NULL)
     {
-        [_scannedData getBytes:value range:NSMakeRange(_scanLocation, length)];
+        [[self data] getBytes:value range:NSMakeRange(loc, length)];
         *value = CFSwapInt32LittleToHost(*value);
     }
     
-    _scanLocation += length;
+    [self setScanLocation:loc + length];
     return YES;
 }
 
 - (BOOL)scanLittleEndianInt64:(uint64_t *)value
 {
     unsigned long long length = sizeof(*value);
-    if(_scanLocation + length > _dataLength) return NO;
+    unsigned long long loc    = [self scanLocation];
+    if(loc + length > [self dataLength]) return NO;
     
     if(value != NULL)
     {
-        [_scannedData getBytes:value range:NSMakeRange(_scanLocation, length)];
+        [[self data] getBytes:value range:NSMakeRange(loc, length)];
         *value = CFSwapInt64LittleToHost(*value);
     }
     
-    _scanLocation += length;
+    [self setScanLocation:loc + length];
     return YES;
 }
 
 - (BOOL)scanBigEndianInt16:(uint16_t *)value
 {
     unsigned long long length = sizeof(*value);
-    if(_scanLocation + length > _dataLength) return NO;
+    unsigned long long loc    = [self scanLocation];
+    if(loc + length > [self dataLength]) return NO;
     
     if(value != NULL)
     {
-        [_scannedData getBytes:value range:NSMakeRange(_scanLocation, length)];
+        [[self data] getBytes:value range:NSMakeRange(loc, length)];
         *value = CFSwapInt16BigToHost(*value);
     }
     
-    _scanLocation += length;
+    [self setScanLocation:loc + length];
     return YES;
 }
 
 - (BOOL)scanBigEndianInt32:(uint32_t *)value
 {
     unsigned long long length = sizeof(*value);
-    if(_scanLocation + length > _dataLength) return NO;
+    unsigned long long loc    = [self scanLocation];
+    if(loc + length > [self dataLength]) return NO;
     
     if(value != NULL)
     {
-        [_scannedData getBytes:value range:NSMakeRange(_scanLocation, length)];
+        [[self data] getBytes:value range:NSMakeRange(loc, length)];
         *value = CFSwapInt32BigToHost(*value);
     }
     
-    _scanLocation += length;
+    [self setScanLocation:loc + length];
     return YES;
 }
 
 - (BOOL)scanBigEndianInt64:(uint64_t *)value
 {
     unsigned long long length = sizeof(*value);
-    if(_scanLocation + length > _dataLength) return NO;
+    unsigned long long loc    = [self scanLocation];
+    if(loc + length > [self dataLength]) return NO;
     
     if(value != NULL)
     {
-        [_scannedData getBytes:value range:NSMakeRange(_scanLocation, length)];
+        [[self data] getBytes:value range:NSMakeRange(loc, length)];
         *value = CFSwapInt64BigToHost(*value);
     }
     
-    _scanLocation += length;
+    [self setScanLocation:loc + length];
     return YES;
 }
 
@@ -483,64 +498,69 @@
 - (BOOL)scanFloat:(float *)value
 {
     unsigned long long length = sizeof(*value);
-    if(_scanLocation + length > _dataLength) return NO;
+    unsigned long long loc    = [self scanLocation];
+    if(loc + length > [self dataLength]) return NO;
     
-    if(value != NULL) [_scannedData getBytes:value range:NSMakeRange(_scanLocation, length)];
+    if(value != NULL) [[self data] getBytes:value range:NSMakeRange(loc, length)];
     
-    _scanLocation += length;
+    [self setScanLocation:loc + length];
     return YES;
 }
 
 - (BOOL)scanDouble:(double *)value
 {
     unsigned long long length = sizeof(*value);
-    if(_scanLocation + length > _dataLength) return NO;
+    unsigned long long loc    = [self scanLocation];
+    if(loc + length > [self dataLength]) return NO;
     
-    if(value != NULL) [_scannedData getBytes:value range:NSMakeRange(_scanLocation, length)];
+    if(value != NULL) [[self data] getBytes:value range:NSMakeRange(loc, length)];
     
-    _scanLocation += length;
+    [self setScanLocation:loc + length];
     return YES;
 }
 
 - (BOOL)scanSwappedFloat:(float *)value
 {
     unsigned long long length = sizeof(*value);
-    if(_scanLocation + length > _dataLength) return NO;
+    unsigned long long loc    = [self scanLocation];
+    if(loc + length > [self dataLength]) return NO;
     
     if(value != NULL)
     {
         CFSwappedFloat32 scan;
-        [_scannedData getBytes:&scan range:NSMakeRange(_scanLocation, length)];
+        [[self data] getBytes:&scan range:NSMakeRange(loc, length)];
         *value = CFConvertFloatSwappedToHost(scan);
     }
     
-    _scanLocation += length;
+    [self setScanLocation:loc + length];
     return YES;
 }
 
 - (BOOL)scanSwappedDouble:(double *)value
 {
     unsigned long long length = sizeof(*value);
-    if(_scanLocation + length > _dataLength) return NO;
+    unsigned long long loc    = [self scanLocation];
+    if(loc + length > [self dataLength]) return NO;
     
     if(value != NULL)
     {
         CFSwappedFloat64 scan;
-        [_scannedData getBytes:&scan range:NSMakeRange(_scanLocation, length)];
+        [[self data] getBytes:&scan range:NSMakeRange(loc, length)];
         *value = CFConvertDoubleSwappedToHost(scan);
     }
     
-    _scanLocation += length;
+    [self setScanLocation:loc + length];
     return YES;
 }
 
 - (BOOL)scanData:(NSData **)data ofLength:(unsigned long long)length
 {
-    if(_scanLocation + length > _dataLength) return NO;
+    unsigned long long loc = [self scanLocation];
+    if(loc + length > [self dataLength]) return NO;
     
-    if(data != NULL) *data = [_scannedData subdataWithRange:NSMakeRange(_scanLocation, length)];
+    if(data != NULL) *data = [[self data] subdataWithRange:NSMakeRange(loc, length)];
     
-    _scanLocation += length;
+    [self setScanLocation:loc + length];
     
     return YES;
 }
@@ -548,7 +568,7 @@
 - (BOOL)scanData:(NSData *)data intoData:(NSData **)dataValue
 {
     unsigned long long length = [data length];
-    if(_scanLocation + length > _dataLength) return NO;
+    if(_scanLocation + length > [self dataLength]) return NO;
     
     if(length > 0)
     {
@@ -558,7 +578,7 @@
         {
             if(dataValue != NULL) *dataValue = subdata;
             
-            _scanLocation += length;
+            [self setScanLocation:_scanLocation + length];
             return YES;
         }
     }
@@ -605,7 +625,7 @@
        (scannedRange.location == _scanLocation && scannedRange.length == 0))
         return NO;
     
-    if(dataValue != NULL) *dataValue = [_scannedData subdataWithRange:scannedRange];
+    if(dataValue != NULL) *dataValue = [[self data] subdataWithRange:scannedRange];
     
     _scanLocation = NSMaxRange(scannedRange);
     
@@ -614,11 +634,12 @@
 
 - (BOOL)scanString:(NSString **)value ofLength:(unsigned long long)length usingEncoding:(NSStringEncoding)encoding
 {
-    if(_scanLocation + length > _dataLength) return NO;
+    unsigned long long loc = [self scanLocation];
+    if(loc + length > [self dataLength]) return NO;
     
     if(length > 0 && value != NULL)
     {
-        NSData *subdata = [_scannedData subdataWithRange:NSMakeRange(_scanLocation, length)];
+        NSData *subdata = [[self data] subdataWithRange:NSMakeRange(loc, length)];
 #if __has_feature(objc_arc)
         *value = [[NSString alloc] initWithData:subdata encoding:encoding];
 #else
@@ -626,7 +647,7 @@
 #endif
     }
     
-    _scanLocation += length;
+    [self setScanLocation:loc + length];
     return YES;
 }
 
