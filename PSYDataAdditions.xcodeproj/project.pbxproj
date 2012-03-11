@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C625C641150D2DF3002E9EB3 /* PSYDataDataScanner.h in Headers */ = {isa = PBXBuildFile; fileRef = C625C63F150D2DF3002E9EB3 /* PSYDataDataScanner.h */; };
+		C625C642150D2DF3002E9EB3 /* PSYDataDataScanner.m in Sources */ = {isa = PBXBuildFile; fileRef = C625C640150D2DF3002E9EB3 /* PSYDataDataScanner.m */; };
+		C625C648150D3296002E9EB3 /* PSYFileHandleScanner.h in Headers */ = {isa = PBXBuildFile; fileRef = C625C646150D3296002E9EB3 /* PSYFileHandleScanner.h */; };
+		C625C649150D3296002E9EB3 /* PSYFileHandleScanner.m in Sources */ = {isa = PBXBuildFile; fileRef = C625C647150D3296002E9EB3 /* PSYFileHandleScanner.m */; };
 		C66D5B2514CC5FF6003CC295 /* NSMutableData+PSYDataWriter.h in Headers */ = {isa = PBXBuildFile; fileRef = C66D5B2314CC5FF6003CC295 /* NSMutableData+PSYDataWriter.h */; };
 		C66D5B2614CC5FF6003CC295 /* NSMutableData+PSYDataWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = C66D5B2414CC5FF6003CC295 /* NSMutableData+PSYDataWriter.m */; };
 		C6F1F04B1469C8F50083A029 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C6F1F04A1469C8F50083A029 /* Cocoa.framework */; };
@@ -31,6 +35,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		C625C63F150D2DF3002E9EB3 /* PSYDataDataScanner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PSYDataDataScanner.h; sourceTree = "<group>"; };
+		C625C640150D2DF3002E9EB3 /* PSYDataDataScanner.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PSYDataDataScanner.m; sourceTree = "<group>"; };
+		C625C646150D3296002E9EB3 /* PSYFileHandleScanner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PSYFileHandleScanner.h; sourceTree = "<group>"; };
+		C625C647150D3296002E9EB3 /* PSYFileHandleScanner.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PSYFileHandleScanner.m; sourceTree = "<group>"; };
 		C66D5B2314CC5FF6003CC295 /* NSMutableData+PSYDataWriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSMutableData+PSYDataWriter.h"; sourceTree = "<group>"; };
 		C66D5B2414CC5FF6003CC295 /* NSMutableData+PSYDataWriter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSMutableData+PSYDataWriter.m"; sourceTree = "<group>"; };
 		C6F1F0471469C8F50083A029 /* PSYDataAdditions.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PSYDataAdditions.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -73,6 +81,17 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		C625C63E150D2DC5002E9EB3 /* PSYDataScanner Private Subclasses */ = {
+			isa = PBXGroup;
+			children = (
+				C625C63F150D2DF3002E9EB3 /* PSYDataDataScanner.h */,
+				C625C640150D2DF3002E9EB3 /* PSYDataDataScanner.m */,
+				C625C646150D3296002E9EB3 /* PSYFileHandleScanner.h */,
+				C625C647150D3296002E9EB3 /* PSYFileHandleScanner.m */,
+			);
+			name = "PSYDataScanner Private Subclasses";
+			sourceTree = "<group>";
+		};
 		C6F1F03B1469C8F50083A029 = {
 			isa = PBXGroup;
 			children = (
@@ -117,6 +136,7 @@
 			children = (
 				C6F1F0771469C9150083A029 /* PSYDataScanner.h */,
 				C6F1F0781469C9150083A029 /* PSYDataScanner.m */,
+				C625C63E150D2DC5002E9EB3 /* PSYDataScanner Private Subclasses */,
 				C66D5B2314CC5FF6003CC295 /* NSMutableData+PSYDataWriter.h */,
 				C66D5B2414CC5FF6003CC295 /* NSMutableData+PSYDataWriter.m */,
 				C6F1F0511469C8F50083A029 /* Supporting Files */,
@@ -162,6 +182,8 @@
 			files = (
 				C6F1F0791469C9150083A029 /* PSYDataScanner.h in Headers */,
 				C66D5B2514CC5FF6003CC295 /* NSMutableData+PSYDataWriter.h in Headers */,
+				C625C641150D2DF3002E9EB3 /* PSYDataDataScanner.h in Headers */,
+				C625C648150D3296002E9EB3 /* PSYFileHandleScanner.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -274,6 +296,8 @@
 			files = (
 				C6F1F07A1469C9150083A029 /* PSYDataScanner.m in Sources */,
 				C66D5B2614CC5FF6003CC295 /* NSMutableData+PSYDataWriter.m in Sources */,
+				C625C642150D2DF3002E9EB3 /* PSYDataDataScanner.m in Sources */,
+				C625C649150D3296002E9EB3 /* PSYFileHandleScanner.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

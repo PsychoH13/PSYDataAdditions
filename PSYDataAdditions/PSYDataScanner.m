@@ -24,9 +24,27 @@
  */
 
 #import "PSYDataScanner.h"
+#import "PSYDataDataScanner.h"
+#import "PSYFileHandleScanner.h"
+
+static void PSYRequestConcreteImplementation(Class cls, SEL sel, BOOL isSubclass)
+{
+    if(isSubclass) [NSException raise:NSInvalidArgumentException format:@"*** -%@ only defined for abstract class.  Define -[%@ %@]!", NSStringFromSelector(sel), cls, NSStringFromSelector(sel)];
+    else           [NSException raise:NSInvalidArgumentException format:@"*** -%@ cannot be sent to an abstract object of class %@: Create a concrete instance!", NSStringFromSelector(sel), cls];
+}
+
+@interface PSYPlaceholderDataScanner : PSYDataScanner
+@end
 
 @implementation PSYDataScanner
-@synthesize data = _scannedData, scanLocation = _scanLocation, dataLength = _dataLength;
+
++ (id)allocWithZone:(NSZone *)zone
+{
+    if(self == [PSYDataScanner class])
+        return [[PSYPlaceholderDataScanner alloc] init];
+    
+    return [super allocWithZone:zone];
+}
 
 + (id)scannerWithData:(NSData *)dataToScan
 {
@@ -37,43 +55,51 @@
 #endif
 }
 
-- (id)init
-{
-    return [self initWithData:nil];
-}
-
 - (id)initWithData:(NSData *)dataToScan
 {
-    if(dataToScan == nil)
-    {
 #if !__has_feature(objc_arc)
-        [self release];
+    [self release];
 #endif
-        return nil;
-    }
-    
-    if((self = [super init]))
-    {
-        _scannedData = [dataToScan copy];
-        _dataLength  = [_scannedData length];
-    }
-    return self;
+    return nil;
 }
 
-#if !__has_feature(objc_arc)
-- (void)dealloc
++ (id)scannerWithFileHandle:(NSFileHandle *)fileToScan;
 {
-    [_scannedData release];
-    [super dealloc];
-}
+#if __has_feature(objc_arc)
+    return [[self alloc] initWithFileHandle:fileToScan];
+#else
+    return [[[self alloc] initWithFileHandle:fileToScan] autorelease];
 #endif
+}
+
+- (id)initWithFileHandle:(NSFileHandle *)fileToScan;
+{
+#if !__has_feature(objc_arc)
+    [self release];
+#endif
+    return nil;
+}
+
+- (NSData *)data
+{
+    PSYRequestConcreteImplementation([self class], _cmd, [self class] != [PSYDataScanner class]);
+    return nil;
+}
+
+- (unsigned long long)dataLength
+{
+    return [[self data] length];
+}
+
+- (unsigned long long)scanLocation
+{
+    PSYRequestConcreteImplementation([self class], _cmd, [self class] != [PSYDataScanner class]);
+    return 0;
+}
 
 - (void)setScanLocation:(unsigned long long)value
 {
-    if(value > [_scannedData length])
-        [NSException raise:NSRangeException format:@"*** -[PSYDataScanner setScanLocation:]: Range or index out of bounds"];
-    
-    _scanLocation = value;
+    PSYRequestConcreteImplementation([self class], _cmd, [self class] != [PSYDataScanner class]);
 }
 
 - (BOOL)setScanLocation:(NSInteger)relativeLocation relativeTo:(PSYDataScannerLocation)startPoint;
@@ -521,68 +547,13 @@
 
 - (BOOL)scanData:(NSData *)data intoData:(NSData **)dataValue
 {
-    unsigned long long length = [data length];
-    if(_scanLocation + length > [self dataLength]) return NO;
-    
-    if(length > 0)
-    {
-        NSData *subdata = [_scannedData subdataWithRange:NSMakeRange(_scanLocation, length)];
-        
-        if([subdata isEqualToData:data])
-        {
-            if(dataValue != NULL) *dataValue = subdata;
-            
-            [self setScanLocation:_scanLocation + length];
-            return YES;
-        }
-    }
-    
+    PSYRequestConcreteImplementation([self class], _cmd, [self class] != [PSYDataScanner class]);
     return NO;
 }
 
 - (BOOL)scanUpToData:(NSData *)stopData intoData:(NSData **)dataValue
 {
-    unsigned long long length = [stopData length];
-    
-    NSRange scannedRange = NSMakeRange(_scanLocation, 0);
-    
-    if(length == 0 || _scanLocation + length > _dataLength)
-        scannedRange.length = _dataLength - _scanLocation;
-    else
-    {
-        const unsigned char *scannedBuffer = [_scannedData bytes];
-        const unsigned char *stopBuffer    = [stopData bytes];
-        
-        BOOL hasFoundData = NO;
-        
-        for(unsigned long long scannedLoc = _scanLocation; scannedLoc + length <= _dataLength; scannedLoc++)
-        {
-            hasFoundData = YES;
-            for(unsigned long long stopLoc = 0; stopLoc < length; stopLoc++)
-                if(scannedBuffer[scannedLoc + stopLoc] != stopBuffer[stopLoc])
-                {
-                    hasFoundData = NO;
-                    break;
-                }
-            
-            if(hasFoundData)
-            {
-                scannedRange.length = scannedLoc - _scanLocation;
-                break;
-            }
-        }
-        
-        if(!hasFoundData) scannedRange.length = _dataLength - _scanLocation;
-    }
-    
-    if(scannedRange.length == 0 ||
-       (scannedRange.location == _scanLocation && scannedRange.length == 0))
-        return NO;
-    
-    if(dataValue != NULL) *dataValue = [[self data] subdataWithRange:scannedRange];
-    
-    _scanLocation = NSMaxRange(scannedRange);
-    
+    PSYRequestConcreteImplementation([self class], _cmd, [self class] != [PSYDataScanner class]);
     return YES;
 }
 
@@ -625,27 +596,38 @@
 
 - (BOOL)scanNullTerminatedString:(NSString **)value withEncoding:(NSStringEncoding)encoding;
 {
-    NSData *terminator = PSYNullTerminatorDataForEncoding(encoding);
-    
-    NSRange termRange = [_scannedData rangeOfData:terminator options:0 range:NSMakeRange(_scanLocation, [_scannedData length] - _scanLocation)];
-    
-    if(termRange.location != NSNotFound)
-    {
-        if(value != NULL)
-        {
-            NSData *subData = [_scannedData subdataWithRange:NSMakeRange(_scanLocation, termRange.location - _scanLocation)];
-#if __has_feature(objc_arc)
-            *value = [[NSString alloc] initWithData:subData encoding:encoding];
-#else
-            *value = [[[NSString alloc] initWithData:subData encoding:encoding] autorelease];
-#endif
-        }
-        
-        _scanLocation = NSMaxRange(termRange);
-        return YES;
-    }
-    
+    PSYRequestConcreteImplementation([self class], _cmd, [self class] != [PSYDataScanner class]);
     return NO;
+}
+
+@end
+
+@implementation PSYPlaceholderDataScanner
+
++ (id)allocWithZone:(NSZone *)zone
+{
+    static PSYPlaceholderDataScanner *sharedPlaceholder = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        sharedPlaceholder = [[super allocWithZone:zone] init];
+    });
+    
+    return sharedPlaceholder;
+}
+
+- (id)init
+{
+    return self;
+}
+
+- (id)initWithData:(NSData *)dataToScan
+{
+    return (id)[[PSYDataDataScanner alloc] initWithData:dataToScan];
+}
+
+- (id)initWithFileHandle:(NSFileHandle *)fileToScan
+{
+    return (id)[[PSYFileHandleScanner alloc] initWithFileHandle:fileToScan];
 }
 
 @end
