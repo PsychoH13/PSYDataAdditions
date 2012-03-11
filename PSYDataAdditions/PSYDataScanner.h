@@ -33,6 +33,12 @@ typedef enum _PSYDataScannerLocation
 } PSYDataScannerLocation;
 
 @interface PSYDataScanner : NSObject
+{
+@private
+    NSData             *_scannedData;
+    unsigned long long  _dataLength;
+    unsigned long long  _scanLocation;
+}
 
 + (id)scannerWithData:(NSData *)dataToScan;
 - (id)initWithData:(NSData *)dataToScan;

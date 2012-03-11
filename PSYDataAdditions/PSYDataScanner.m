@@ -25,15 +25,6 @@
 
 #import "PSYDataScanner.h"
 
-@interface _PSYDataScanner : PSYDataScanner
-{
-@private
-    NSData             *_scannedData;
-    unsigned long long  _dataLength;
-    unsigned long long  _scanLocation;
-}
-@end
-
 @implementation PSYDataScanner
 @synthesize data = _scannedData, scanLocation = _scanLocation, dataLength = _dataLength;
 
