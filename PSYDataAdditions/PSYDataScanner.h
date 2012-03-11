@@ -35,9 +35,9 @@ typedef enum _PSYDataScannerLocation
 @interface PSYDataScanner : NSObject
 {
 @private
-    NSData     *_scannedData;
-    NSUInteger  _dataLength;
-    NSUInteger  _scanLocation;
+    NSData             *_scannedData;
+    unsigned long long  _dataLength;
+    unsigned long long  _scanLocation;
 }
 
 + (id)scannerWithData:(NSData *)dataToScan;
@@ -45,7 +45,7 @@ typedef enum _PSYDataScannerLocation
 
 @property(readonly, copy, nonatomic) NSData *data;
 
-@property(nonatomic) NSUInteger scanLocation;
+@property(nonatomic) unsigned long long scanLocation;
 
 - (BOOL)isAtEnd;
 
@@ -98,10 +98,10 @@ typedef enum _PSYDataScannerLocation
 - (BOOL)scanSwappedFloat:(float *)value;
 - (BOOL)scanSwappedDouble:(double *)value;
 
-- (BOOL)scanData:(NSData **)data ofLength:(NSUInteger)length;
+- (BOOL)scanData:(NSData **)data ofLength:(unsigned long long)length;
 - (BOOL)scanData:(NSData *)data intoData:(NSData **)dataValue;
 - (BOOL)scanUpToData:(NSData *)stopData intoData:(NSData **)dataValue;
-- (BOOL)scanString:(NSString **)value ofLength:(NSUInteger)length usingEncoding:(NSStringEncoding)encoding;
+- (BOOL)scanString:(NSString **)value ofLength:(unsigned long long)length usingEncoding:(NSStringEncoding)encoding;
 - (BOOL)scanUpToString:(NSString *)stopString intoString:(NSString **)value usingEncoding:(NSStringEncoding)encoding;
 - (BOOL)scanNullTerminatedString:(NSString **)value withEncoding:(NSStringEncoding)encoding;
 
