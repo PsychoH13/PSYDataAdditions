@@ -69,7 +69,7 @@
 }
 #endif
 
-- (void)setScanLocation:(NSUInteger)value
+- (void)setScanLocation:(unsigned long long)value
 {
     if(value > [_scannedData length])
         [NSException raise:NSRangeException format:@"*** -[PSYDataScanner setScanLocation:]: Range or index out of bounds"];
@@ -105,7 +105,7 @@
 
 - (BOOL)scanInt8:(uint8_t *)value
 {
-    NSUInteger length = sizeof(*value);
+    unsigned long long length = sizeof(*value);
     if(_scanLocation + length > _dataLength) return NO;
     
     if(value != NULL) [_scannedData getBytes:value range:NSMakeRange(_scanLocation, length)];
@@ -116,7 +116,7 @@
 
 - (BOOL)scanLittleEndianInt16:(uint16_t *)value
 {
-    NSUInteger length = sizeof(*value);
+    unsigned long long length = sizeof(*value);
     if(_scanLocation + length > _dataLength) return NO;
     
     if(value != NULL)
@@ -131,7 +131,7 @@
 
 - (BOOL)scanLittleEndianInt32:(uint32_t *)value
 {
-    NSUInteger length = sizeof(*value);
+    unsigned long long length = sizeof(*value);
     if(_scanLocation + length > _dataLength) return NO;
     
     if(value != NULL)
@@ -146,7 +146,7 @@
 
 - (BOOL)scanLittleEndianInt64:(uint64_t *)value
 {
-    NSUInteger length = sizeof(*value);
+    unsigned long long length = sizeof(*value);
     if(_scanLocation + length > _dataLength) return NO;
     
     if(value != NULL)
@@ -161,7 +161,7 @@
 
 - (BOOL)scanBigEndianInt16:(uint16_t *)value
 {
-    NSUInteger length = sizeof(*value);
+    unsigned long long length = sizeof(*value);
     if(_scanLocation + length > _dataLength) return NO;
     
     if(value != NULL)
@@ -176,7 +176,7 @@
 
 - (BOOL)scanBigEndianInt32:(uint32_t *)value
 {
-    NSUInteger length = sizeof(*value);
+    unsigned long long length = sizeof(*value);
     if(_scanLocation + length > _dataLength) return NO;
     
     if(value != NULL)
@@ -191,7 +191,7 @@
 
 - (BOOL)scanBigEndianInt64:(uint64_t *)value
 {
-    NSUInteger length = sizeof(*value);
+    unsigned long long length = sizeof(*value);
     if(_scanLocation + length > _dataLength) return NO;
     
     if(value != NULL)
@@ -241,7 +241,7 @@
 
 - (BOOL)scanLittleEndianVarint32:(uint32_t *)value
 {
-    NSUInteger loc = [self scanLocation];
+    unsigned long long loc = [self scanLocation];
     
     uint32_t result = 0;
     
@@ -268,7 +268,7 @@
 
 - (BOOL)scanLittleEndianVarint64:(uint64_t *)value
 {
-    NSUInteger loc = [self scanLocation];
+    unsigned long long loc = [self scanLocation];
     
     uint64_t result = 0;
 
@@ -295,7 +295,7 @@
 
 - (BOOL)scanBigEndianVarint32:(uint32_t *)value
 {
-    NSUInteger loc = [self scanLocation];
+    unsigned long long loc = [self scanLocation];
     
     uint32_t result = 0;
     
@@ -322,7 +322,7 @@
 
 - (BOOL)scanBigEndianVarint64:(uint64_t *)value
 {
-    NSUInteger loc = [self scanLocation];
+    unsigned long long loc = [self scanLocation];
     
     uint64_t result = 0;
     
@@ -445,7 +445,7 @@
 
 - (BOOL)scanFloat:(float *)value
 {
-    NSUInteger length = sizeof(*value);
+    unsigned long long length = sizeof(*value);
     if(_scanLocation + length > _dataLength) return NO;
     
     if(value != NULL) [_scannedData getBytes:value range:NSMakeRange(_scanLocation, length)];
@@ -456,7 +456,7 @@
 
 - (BOOL)scanDouble:(double *)value
 {
-    NSUInteger length = sizeof(*value);
+    unsigned long long length = sizeof(*value);
     if(_scanLocation + length > _dataLength) return NO;
     
     if(value != NULL) [_scannedData getBytes:value range:NSMakeRange(_scanLocation, length)];
@@ -467,7 +467,7 @@
 
 - (BOOL)scanSwappedFloat:(float *)value
 {
-    NSUInteger length = sizeof(*value);
+    unsigned long long length = sizeof(*value);
     if(_scanLocation + length > _dataLength) return NO;
     
     if(value != NULL)
@@ -483,7 +483,7 @@
 
 - (BOOL)scanSwappedDouble:(double *)value
 {
-    NSUInteger length = sizeof(*value);
+    unsigned long long length = sizeof(*value);
     if(_scanLocation + length > _dataLength) return NO;
     
     if(value != NULL)
@@ -497,7 +497,7 @@
     return YES;
 }
 
-- (BOOL)scanData:(NSData **)data ofLength:(NSUInteger)length
+- (BOOL)scanData:(NSData **)data ofLength:(unsigned long long)length
 {
     if(_scanLocation + length > _dataLength) return NO;
     
@@ -510,7 +510,7 @@
 
 - (BOOL)scanData:(NSData *)data intoData:(NSData **)dataValue
 {
-    NSUInteger length = [data length];
+    unsigned long long length = [data length];
     if(_scanLocation + length > _dataLength) return NO;
     
     if(length > 0)
@@ -531,7 +531,7 @@
 
 - (BOOL)scanUpToData:(NSData *)stopData intoData:(NSData **)dataValue
 {
-    NSUInteger length = [stopData length];
+    unsigned long long length = [stopData length];
     
     NSRange scannedRange = NSMakeRange(_scanLocation, 0);
     
@@ -544,10 +544,10 @@
         
         BOOL hasFoundData = NO;
         
-        for(NSUInteger scannedLoc = _scanLocation; scannedLoc + length <= _dataLength; scannedLoc++)
+        for(unsigned long long scannedLoc = _scanLocation; scannedLoc + length <= _dataLength; scannedLoc++)
         {
             hasFoundData = YES;
-            for(NSUInteger stopLoc = 0; stopLoc < length; stopLoc++)
+            for(unsigned long long stopLoc = 0; stopLoc < length; stopLoc++)
                 if(scannedBuffer[scannedLoc + stopLoc] != stopBuffer[stopLoc])
                 {
                     hasFoundData = NO;
@@ -575,7 +575,7 @@
     return YES;
 }
 
-- (BOOL)scanString:(NSString **)value ofLength:(NSUInteger)length usingEncoding:(NSStringEncoding)encoding
+- (BOOL)scanString:(NSString **)value ofLength:(unsigned long long)length usingEncoding:(NSStringEncoding)encoding
 {
     if(_scanLocation + length > _dataLength) return NO;
     
@@ -591,6 +591,24 @@
     
     _scanLocation += length;
     return YES;
+}
+
+- (BOOL)scanUpToString:(NSString *)stopString intoString:(NSString **)value usingEncoding:(NSStringEncoding)encoding;
+{
+    NSData *stopData = [stopString dataUsingEncoding:encoding];
+    NSData *readData = nil;
+    
+    BOOL success = [self scanUpToData:stopData intoData:value != NULL ? &readData : NULL];
+    if(success)
+    {
+#if __has_feature(objc_arc)
+        if(value != NULL) *value = [[NSString alloc] initWithData:readData encoding:encoding];
+#else
+        if(value != NULL) *value = [[[NSString alloc] initWithData:readData encoding:encoding] autorelease];
+#endif
+    }
+    
+    return success;
 }
 
 - (BOOL)scanNullTerminatedString:(NSString **)value withEncoding:(NSStringEncoding)encoding;
