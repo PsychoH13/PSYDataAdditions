@@ -407,6 +407,162 @@
     STAssertEquals(byte, (uint64_t)0xDEADBEEF6699CCFF, @"The scanned value should be equal to the first 8 bytes in the data.");
 }
 
+- (void)testScanLittleEndianVarint32
+{
+    NSData         *data = [NSData dataWithBytes:(uint8_t[2]){0x96, 0x01} length:2];
+    PSYDataScanner *scanner = [PSYDataScanner scannerWithData:data];
+    uint32_t        scannedValue = 0;
+    
+    STAssertTrueNoThrow([scanner scanLittleEndianVarint32:&scannedValue], @"The scanning of little endian varint 32 should succeed and not throw an exception.");
+    
+    STAssertEquals([scanner scanLocation], (NSUInteger)2, @"The scan location should have been advanced by 2.");
+    
+    STAssertEquals(scannedValue, (uint32_t)150, @"The scanned value should be equal to the varint encoded integer in the data.");
+}
+
+- (void)testScanLittleEndianVarint64
+{
+    NSData         *data = [NSData dataWithBytes:(uint8_t[2]){0x96, 0x01} length:2];
+    PSYDataScanner *scanner = [PSYDataScanner scannerWithData:data];
+    uint64_t        scannedValue = 0;
+    
+    STAssertTrueNoThrow([scanner scanLittleEndianVarint64:&scannedValue], @"The scanning of little endian varint 64 should succeed and not throw an exception.");
+    
+    STAssertEquals([scanner scanLocation], (NSUInteger)2, @"The scan location should have been advanced by 2.");
+    
+    STAssertEquals(scannedValue, (uint64_t)150, @"The scanned value should be equal to the varint encoded integer in the data.");
+}
+
+- (void)testScanBigEndianVarint32
+{
+    NSData         *data = [NSData dataWithBytes:(uint8_t[2]){0x81, 0x16} length:2];
+    PSYDataScanner *scanner = [PSYDataScanner scannerWithData:data];
+    uint32_t        scannedValue = 0;
+    
+    STAssertTrueNoThrow([scanner scanBigEndianVarint32:&scannedValue], @"The scanning of big endian varint 32 should succeed and not throw an exception.");
+    
+    STAssertEquals([scanner scanLocation], (NSUInteger)2, @"The scan location should have been advanced by 2.");
+    
+    STAssertEquals(scannedValue, (uint32_t)150, @"The scanned value should be equal to the varint encoded integer in the data.");
+}
+
+- (void)testScanBigEndianVarint64
+{
+    NSData         *data = [NSData dataWithBytes:(uint8_t[2]){0x81, 0x16} length:2];
+    PSYDataScanner *scanner = [PSYDataScanner scannerWithData:data];
+    uint64_t        scannedValue = 0;
+    
+    STAssertTrueNoThrow([scanner scanBigEndianVarint64:&scannedValue], @"The scanning of big endian varint 64 should succeed and not throw an exception.");
+    
+    STAssertEquals([scanner scanLocation], (NSUInteger)2, @"The scan location should have been advanced by 2.");
+    
+    STAssertEquals(scannedValue, (uint64_t)150, @"The scanned value should be equal to the varint encoded integer in the data.");
+}
+
+- (void)testScanLittleEndianSVarint32
+{
+    NSData         *data = [NSData dataWithBytes:(uint8_t[5]){0xEA, 0xFE, 0xFF, 0xFF, 0x0F} length:5];
+    PSYDataScanner *scanner = [PSYDataScanner scannerWithData:data];
+    int32_t         scannedValue = 0;
+    
+    STAssertTrueNoThrow([scanner scanLittleEndianSVarint32:&scannedValue], @"The scanning of little endian signed varint 32 should succeed and not throw an exception.");
+    
+    STAssertEquals([scanner scanLocation], (NSUInteger)5, @"The scan location should have been advanced by 5");
+    
+    STAssertEquals(scannedValue, (int32_t)-150, @"The scanned value should be equal to the varint encoded integer in the data.");
+}
+
+- (void)testScanLittleEndianSVarint64
+{
+    NSData         *data = [NSData dataWithBytes:(uint8_t[10]){0xEA, 0xFE, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x01} length:10];
+    PSYDataScanner *scanner = [PSYDataScanner scannerWithData:data];
+    int64_t         scannedValue = 0;
+    
+    STAssertTrueNoThrow([scanner scanLittleEndianSVarint64:&scannedValue], @"The scanning of little endian signed varint 64 should succeed and not throw an exception.");
+    
+    STAssertEquals([scanner scanLocation], (NSUInteger)10, @"The scan location should have been advanced by 10.");
+    
+    STAssertEquals(scannedValue, (int64_t)-150, @"The scanned value should be equal to the varint encoded integer in the data.");
+}
+
+- (void)testScanBigEndianSVarint32
+{
+    NSData         *data = [NSData dataWithBytes:(uint8_t[5]){0x8F, 0xFF, 0xFF, 0xFE, 0x6A} length:5];
+    PSYDataScanner *scanner = [PSYDataScanner scannerWithData:data];
+    int32_t         scannedValue = 0;
+    
+    STAssertTrueNoThrow([scanner scanBigEndianSVarint32:&scannedValue], @"The scanning of big endian signed varint 32 should succeed and not throw an exception.");
+    
+    STAssertEquals([scanner scanLocation], (NSUInteger)5, @"The scan location should have been advanced by 5");
+    
+    STAssertEquals(scannedValue, (int32_t)-150, @"The scanned value should be equal to the varint encoded integer in the data.");
+}
+
+- (void)testScanBigEndianSVarint64
+{
+    NSData         *data = [NSData dataWithBytes:(uint8_t[10]){0x81, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFE, 0x6A} length:10];
+    PSYDataScanner *scanner = [PSYDataScanner scannerWithData:data];
+    int64_t         scannedValue = 0;
+    
+    STAssertTrueNoThrow([scanner scanBigEndianSVarint64:&scannedValue], @"The scanning of big endian signed varint 64 should succeed and not throw an exception.");
+    
+    STAssertEquals([scanner scanLocation], (NSUInteger)10, @"The scan location should have been advanced by 10.");
+    
+    STAssertEquals(scannedValue, (int64_t)-150, @"The scanned value should be equal to the varint encoded integer in the data.");
+}
+
+- (void)testScanLittleEndianZigZagVarint32
+{
+    NSData         *data = [NSData dataWithBytes:(uint8_t[2]){0xAB, 0x02} length:2];
+    PSYDataScanner *scanner = [PSYDataScanner scannerWithData:data];
+    int32_t         scannedValue = 0;
+    
+    STAssertTrueNoThrow([scanner scanLittleEndianZigZagVarint32:&scannedValue], @"The scanning of little endian zig zag varint 32 should succeed and not throw an exception.");
+    
+    STAssertEquals([scanner scanLocation], (NSUInteger)2, @"The scan location should have been advanced by 2.");
+    
+    STAssertEquals(scannedValue, (int32_t)-150, @"The scanned value should be equal to the varint encoded integer in the data.");
+}
+
+- (void)testScanLittleEndianZigZagVarint64
+{
+    NSData         *data = [NSData dataWithBytes:(uint8_t[2]){0xAB, 0x02} length:2];
+    PSYDataScanner *scanner = [PSYDataScanner scannerWithData:data];
+    int64_t         scannedValue = 0;
+    
+    STAssertTrueNoThrow([scanner scanLittleEndianZigZagVarint64:&scannedValue], @"The scanning of little endian zig zag varint 64 should succeed and not throw an exception.");
+    
+    STAssertEquals([scanner scanLocation], (NSUInteger)2, @"The scan location should have been advanced by 2.");
+    
+    STAssertEquals(scannedValue, (int64_t)-150, @"The scanned value should be equal to the varint encoded integer in the data.");
+}
+
+- (void)testScanBigEndianZigZagVarint32
+{
+    NSData         *data = [NSData dataWithBytes:(uint8_t[2]){0x82, 0x2B} length:2];
+    PSYDataScanner *scanner = [PSYDataScanner scannerWithData:data];
+    int32_t         scannedValue = 0;
+        
+    STAssertTrueNoThrow([scanner scanBigEndianZigZagVarint32:&scannedValue], @"The scanning of big endian zig zag varint 32 should succeed and not throw an exception.");
+    
+    STAssertEquals([scanner scanLocation], (NSUInteger)2, @"The scan location should have been advanced by 2");
+    
+    STAssertEquals(scannedValue, (int32_t)-150, @"The scanned value should be equal to the varint encoded integer in the data.");
+}
+
+- (void)testScanBigEndianZigZagVarint64
+{
+    NSData         *data = [NSData dataWithBytes:(uint8_t[2]){0x82, 0x2B} length:2];
+    PSYDataScanner *scanner = [PSYDataScanner scannerWithData:data];
+    int64_t         scannedValue = 0;
+    
+    STAssertTrueNoThrow([scanner scanBigEndianZigZagVarint64:&scannedValue], @"The scanning of big endian zig zag varint 64 should succeed and not throw an exception.");
+    
+    STAssertEquals([scanner scanLocation], (NSUInteger)2, @"The scan location should have been advanced by 2.");
+    
+    STAssertEquals(scannedValue, (int64_t)-150, @"The scanned value should be equal to the varint encoded integer in the data.");
+}
+
 - (void)testScanFloatEmptyData
 {
     NSData         *data    = [NSData data];
