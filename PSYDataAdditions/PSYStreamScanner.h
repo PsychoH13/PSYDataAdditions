@@ -49,19 +49,27 @@
 @end
 
 @interface PSYStreamScannerMessage : NSObject <NSCopying, NSMutableCopying>
-@property(nonatomic, readonly, copy) NSData     *startData;
-@property(nonatomic, readonly, copy) NSData     *stopData;
-@property(nonatomic, readonly)       NSUInteger  minimumPartialLength;
-@property(nonatomic, readonly)       NSUInteger  maximumLength;
+@property(nonatomic, readonly, copy) NSData         *startData;
+@property(nonatomic, readonly, copy) NSData         *stopData;
+@property(nonatomic, readonly)       NSUInteger      minimumPartialLength;
+@property(nonatomic, readonly)       NSUInteger      maximumLength;
+
+// Overall Timeout indicates when the request should stop waiting for the data after the scanning started
+@property(nonatomic, readonly)       NSTimeInterval  overallTimeoutInterval;
+// Partial Timeout indicates when to stop waiting for the "minimumPartialLength" or "stopData" indicators to be reached
+@property(nonatomic, readonly)       NSTimeInterval  partialTimeoutInterval;
 
 @property(nonatomic, readonly, copy) void(^callbackBlock)(PSYStreamScanner *scanner);
 @end
 
 @interface PSYMutableStreamScannerMessage : PSYStreamScannerMessage
-@property(nonatomic, readwrite, copy) NSData     *startData;
-@property(nonatomic, readwrite, copy) NSData     *stopData;
-@property(nonatomic, readwrite)       NSUInteger  minimumPartialLength;
-@property(nonatomic, readwrite)       NSUInteger  maximumLength;
+@property(nonatomic, readwrite, copy) NSData         *startData;
+@property(nonatomic, readwrite, copy) NSData         *stopData;
+@property(nonatomic, readwrite)       NSUInteger      minimumPartialLength;
+@property(nonatomic, readwrite)       NSUInteger      maximumLength;
+
+@property(nonatomic, readwrite)       NSTimeInterval  overallTimeoutInterval;
+@property(nonatomic, readwrite)       NSTimeInterval  partialTimeoutInterval;
 
 @property(nonatomic, readwrite, copy) void(^callbackBlock)(PSYStreamScanner *scanner);
 @end
