@@ -16,6 +16,7 @@
 		C625C650150D61CD002E9EB3 /* PSYFileHandleScannerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = C625C64F150D61CD002E9EB3 /* PSYFileHandleScannerTests.m */; };
 		C66D5B2514CC5FF6003CC295 /* NSMutableData+PSYDataWriter.h in Headers */ = {isa = PBXBuildFile; fileRef = C66D5B2314CC5FF6003CC295 /* NSMutableData+PSYDataWriter.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		C66D5B2614CC5FF6003CC295 /* NSMutableData+PSYDataWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = C66D5B2414CC5FF6003CC295 /* NSMutableData+PSYDataWriter.m */; };
+		C67687FB150F057B00518128 /* PSYUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = C67687FA150F057B00518128 /* PSYUtilities.h */; };
 		C6F1F04B1469C8F50083A029 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C6F1F04A1469C8F50083A029 /* Cocoa.framework */; };
 		C6F1F0551469C8F50083A029 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = C6F1F0531469C8F50083A029 /* InfoPlist.strings */; };
 		C6F1F0611469C8F50083A029 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C6F1F0601469C8F50083A029 /* SenTestingKit.framework */; };
@@ -48,6 +49,7 @@
 		C625C64F150D61CD002E9EB3 /* PSYFileHandleScannerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PSYFileHandleScannerTests.m; sourceTree = "<group>"; };
 		C66D5B2314CC5FF6003CC295 /* NSMutableData+PSYDataWriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSMutableData+PSYDataWriter.h"; sourceTree = "<group>"; };
 		C66D5B2414CC5FF6003CC295 /* NSMutableData+PSYDataWriter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSMutableData+PSYDataWriter.m"; sourceTree = "<group>"; };
+		C67687FA150F057B00518128 /* PSYUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PSYUtilities.h; sourceTree = "<group>"; };
 		C6F1F0471469C8F50083A029 /* PSYDataAdditions.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PSYDataAdditions.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		C6F1F04A1469C8F50083A029 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		C6F1F04D1469C8F50083A029 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -159,6 +161,7 @@
 				C6F1F0521469C8F50083A029 /* PSYDataAdditions-Info.plist */,
 				C6F1F0531469C8F50083A029 /* InfoPlist.strings */,
 				C6F1F0561469C8F50083A029 /* PSYDataAdditions-Prefix.pch */,
+				C67687FA150F057B00518128 /* PSYUtilities.h */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -196,6 +199,7 @@
 				C625C641150D2DF3002E9EB3 /* PSYDataDataScanner.h in Headers */,
 				C625C648150D3296002E9EB3 /* PSYFileHandleScanner.h in Headers */,
 				C625C64C150D3E06002E9EB3 /* PSYStreamFileHandleScanner.h in Headers */,
+				C67687FB150F057B00518128 /* PSYUtilities.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

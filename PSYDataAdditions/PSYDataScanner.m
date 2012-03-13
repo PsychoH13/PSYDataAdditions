@@ -27,6 +27,7 @@
 #import "PSYDataDataScanner.h"
 #import "PSYFileHandleScanner.h"
 #import "PSYStreamFileHandleScanner.h"
+#import "PSYUtilities.h"
 
 static void PSYRequestConcreteImplementation(Class cls, SEL sel, BOOL isSubclass)
 {
@@ -49,11 +50,7 @@ static void PSYRequestConcreteImplementation(Class cls, SEL sel, BOOL isSubclass
 
 + (id)scannerWithData:(NSData *)dataToScan
 {
-#if __has_feature(objc_arc)
-    return [[self alloc] initWithData:dataToScan];
-#else
-    return [[[self alloc] initWithData:dataToScan] autorelease];
-#endif
+    return AUTORELEASE([[self alloc] initWithData:dataToScan]);
 }
 
 - (id)initWithData:(NSData *)dataToScan
@@ -66,11 +63,7 @@ static void PSYRequestConcreteImplementation(Class cls, SEL sel, BOOL isSubclass
 
 + (id)scannerWithFileHandle:(NSFileHandle *)fileToScan;
 {
-#if __has_feature(objc_arc)
-    return [[self alloc] initWithFileHandle:fileToScan];
-#else
-    return [[[self alloc] initWithFileHandle:fileToScan] autorelease];
-#endif
+    return AUTORELEASE([[self alloc] initWithFileHandle:fileToScan]);
 }
 
 - (id)initWithFileHandle:(NSFileHandle *)fileToScan;
@@ -554,8 +547,24 @@ static void PSYRequestConcreteImplementation(Class cls, SEL sel, BOOL isSubclass
 
 - (BOOL)scanString:(NSString **)value ofLength:(unsigned long long)length usingEncoding:(NSStringEncoding)encoding
 {
-    PSYRequestConcreteImplementation([self class], _cmd, [self class] != [PSYDataScanner class]);
-    return NO;
+    // If the caller does not need the result it's like advancing the scan location by length
+    if(value == NULL) return [self scanData:NULL ofLength:length];
+    
+    BOOL success = NO;
+    NSString *ret  = nil;
+    
+    @autoreleasepool
+    {
+        NSData   *data = nil;
+        success = [self scanData:&data ofLength:length];
+        if(success) ret = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+    }
+    
+    // We do not actually care if the data was decoded properly...
+    // We might want to in the future
+    if(success) *value = AUTORELEASE(ret);
+    
+    return success;
 }
 
 - (BOOL)scanUpToString:(NSString *)stopString intoString:(NSString **)value usingEncoding:(NSStringEncoding)encoding;
@@ -566,11 +575,7 @@ static void PSYRequestConcreteImplementation(Class cls, SEL sel, BOOL isSubclass
     BOOL success = [self scanUpToData:stopData intoData:value != NULL ? &readData : NULL];
     if(success)
     {
-#if __has_feature(objc_arc)
-        if(value != NULL) *value = [[NSString alloc] initWithData:readData encoding:encoding];
-#else
-        if(value != NULL) *value = [[[NSString alloc] initWithData:readData encoding:encoding] autorelease];
-#endif
+        if(value != NULL) *value = AUTORELEASE([[NSString alloc] initWithData:readData encoding:encoding]);
     }
     
     return success;

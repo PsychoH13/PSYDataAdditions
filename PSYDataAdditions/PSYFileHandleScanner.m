@@ -24,16 +24,7 @@
  */
 
 #import "PSYFileHandleScanner.h"
-
-#if __has_feature(objc_arc)
-#define RETAIN(obj) obj
-#define RELEASE(obj) do { obj = nil; } while(NO)
-#define AUTORELEASE(obj) obj
-#else
-#define RETAIN(obj) [obj retain]
-#define RELEASE(obj) do { id __obj = obj; obj = nil; [__obj release]; } while(NO)
-#define AUTORELEASE(obj) [obj autorelease]
-#endif
+#import "PSYUtilities.h"
 
 #if __LP64__
 #define CHUNK_SIZE (1024 * 512)
@@ -144,11 +135,10 @@ static BOOL PSYLocationInRange(PSYRange range, unsigned long long loc)
 
 - (void)setScanLocation:(unsigned long long)value
 {
-    if(_useCacheOffset) _cacheScanLocation = value;
+    if(_useCacheOffset)
+        _cacheScanLocation = value;
     else if(PSYLocationInRange(_cacheRange, value))
-    {
         _cacheScanLocation = value - _cacheRange.location;
-    }
     else
     {
         // If the scan location is outside of the cached range, trash the whole cached data
@@ -382,28 +372,6 @@ static BOOL PSYLocationInRange(PSYRange range, unsigned long long loc)
     RELEASE(cacheData);
     
     return YES;
-}
-
-- (BOOL)scanString:(NSString **)value ofLength:(unsigned long long)length usingEncoding:(NSStringEncoding)encoding
-{
-    // If the caller does not need the result it's like advancing the scan location by length
-    if(value == NULL) return [self scanData:NULL ofLength:length];
-    
-    BOOL success = NO;
-    NSString *ret  = nil;
-    
-    @autoreleasepool
-    {
-        NSData   *data = nil;
-        success = [self scanData:&data ofLength:length];
-        if(success) ret = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-    }
-    
-    // We do not actually care if the data was decoded properly...
-    // We might want to in the future
-    if(success) *value = AUTORELEASE(ret);
-    
-    return success;
 }
 
 - (BOOL)scanNullTerminatedString:(NSString **)value withEncoding:(NSStringEncoding)encoding

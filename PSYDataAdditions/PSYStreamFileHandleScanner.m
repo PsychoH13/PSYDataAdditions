@@ -7,6 +7,7 @@
 //
 
 #import "PSYStreamFileHandleScanner.h"
+#import "PSYUtilities.h"
 
 // TODO: Implement a class that can handle pipe or socket NSFileHandles
 @implementation PSYStreamFileHandleScanner

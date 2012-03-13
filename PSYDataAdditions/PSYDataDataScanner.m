@@ -24,6 +24,7 @@
  */
 
 #import "PSYDataDataScanner.h"
+#import "PSYUtilities.h"
 
 @implementation PSYDataDataScanner
 @synthesize data = _scannedData, scanLocation = _scanLocation, dataLength = _dataLength;
@@ -140,25 +141,6 @@
     return YES;
 }
 
-- (BOOL)scanString:(NSString **)value ofLength:(unsigned long long)length usingEncoding:(NSStringEncoding)encoding
-{
-    unsigned long long loc = [self scanLocation];
-    if(loc + length > [self dataLength]) return NO;
-    
-    if(length > 0 && value != NULL)
-    {
-        NSData *subdata = [[self data] subdataWithRange:NSMakeRange(loc, length)];
-#if __has_feature(objc_arc)
-        *value = [[NSString alloc] initWithData:subdata encoding:encoding];
-#else
-        *value = [[[NSString alloc] initWithData:subdata encoding:encoding] autorelease];
-#endif
-    }
-    
-    [self setScanLocation:loc + length];
-    return YES;
-}
-
 - (BOOL)scanNullTerminatedString:(NSString **)value withEncoding:(NSStringEncoding)encoding;
 {
     NSData *terminator = PSYNullTerminatorDataForEncoding(encoding);
@@ -170,11 +152,7 @@
         if(value != NULL)
         {
             NSData *subData = [_scannedData subdataWithRange:NSMakeRange(_scanLocation, termRange.location - _scanLocation)];
-#if __has_feature(objc_arc)
-            *value = [[NSString alloc] initWithData:subData encoding:encoding];
-#else
-            *value = [[[NSString alloc] initWithData:subData encoding:encoding] autorelease];
-#endif
+            *value = AUTORELEASE([[NSString alloc] initWithData:subData encoding:encoding]);
         }
         
         _scanLocation = NSMaxRange(termRange);
