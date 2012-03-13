@@ -28,7 +28,7 @@ static char testData[] = {
 - (void)testScanUpToData;
 {
     NSData         *data    = [NSData dataWithBytes:testData length:sizeof(testData)];
-    NSFileHandle   *handle  = [[[PSYDataFileHandle alloc] initWithData:data] autorelease];
+    NSFileHandle   *handle  = [[[PSYDataFileHandle alloc] initWithData:data maximumReadSize:3] autorelease];
     PSYDataScanner *scanner = [PSYDataScanner scannerWithFileHandle:handle];
     
     uint16_t scan1 = 0;

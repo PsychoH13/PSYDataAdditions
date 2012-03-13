@@ -65,6 +65,8 @@ static BOOL PSYLocationInRange(PSYRange range, unsigned long long loc)
 - (void)PSY_resetCachedData;
 
 // Reads CHUNK_SIZE and update the cache if length is out of the bounds of the cache
+// If the file handle can't return enough data in one shot,
+// it will attempt to read more until the length parameter is covered
 - (void)PSY_readAndCacheDataOfLength:(unsigned long long)length;
 
 @end
@@ -118,14 +120,21 @@ static BOOL PSYLocationInRange(PSYRange range, unsigned long long loc)
     // We cached the data at the end of the file we can't go further
     if(PSYRangeMax(_cacheRange) >= _fileLength) return;
     
+    // Remove the cache that we already read to avoid caching too much memory
+    [_cacheData replaceBytesInRange:NSMakeRange(0, _cacheScanLocation) withBytes:NULL length:0];
+    _cacheRange.location += _cacheScanLocation;
+    _cacheRange.length   -= _cacheScanLocation;
+    _cacheScanLocation    = 0;
+    
+    // Prepare to read from the location after what we already cached
     [_fileHandle seekToFileOffset:PSYRangeMax(_cacheRange)];
     
-    [_cacheData replaceBytesInRange:NSMakeRange(0, _cacheScanLocation) withBytes:NULL length:0];
-    [_cacheData appendData:[_fileHandle readDataOfLength:CHUNK_SIZE]];
-    
-    _cacheRange.location += _cacheScanLocation;
-    _cacheRange.length    = [_cacheData length];
-    _cacheScanLocation    = 0;
+    // We assume that the file handle may return less than CHUNK_SIZE
+    while(_cacheRange.length < length)
+    {
+        [_cacheData appendData:[_fileHandle readDataOfLength:CHUNK_SIZE - _cacheRange.length]];
+        _cacheRange.length = [_cacheData length];
+    }
 }
 
 - (unsigned long long)scanLocation
