@@ -26,6 +26,7 @@
 #import "PSYDataScanner.h"
 #import "PSYDataDataScanner.h"
 #import "PSYFileHandleScanner.h"
+#import "PSYStreamFileHandleScanner.h"
 
 static void PSYRequestConcreteImplementation(Class cls, SEL sel, BOOL isSubclass)
 {
@@ -535,14 +536,8 @@ static void PSYRequestConcreteImplementation(Class cls, SEL sel, BOOL isSubclass
 
 - (BOOL)scanData:(NSData **)data ofLength:(unsigned long long)length
 {
-    unsigned long long loc = [self scanLocation];
-    if(loc + length > [self dataLength]) return NO;
-    
-    if(data != NULL) *data = [[self data] subdataWithRange:NSMakeRange(loc, length)];
-    
-    [self setScanLocation:loc + length];
-    
-    return YES;
+    PSYRequestConcreteImplementation([self class], _cmd, [self class] != [PSYDataScanner class]);
+    return NO;
 }
 
 - (BOOL)scanData:(NSData *)data intoData:(NSData **)dataValue
@@ -554,26 +549,13 @@ static void PSYRequestConcreteImplementation(Class cls, SEL sel, BOOL isSubclass
 - (BOOL)scanUpToData:(NSData *)stopData intoData:(NSData **)dataValue
 {
     PSYRequestConcreteImplementation([self class], _cmd, [self class] != [PSYDataScanner class]);
-    return YES;
+    return NO;
 }
 
 - (BOOL)scanString:(NSString **)value ofLength:(unsigned long long)length usingEncoding:(NSStringEncoding)encoding
 {
-    unsigned long long loc = [self scanLocation];
-    if(loc + length > [self dataLength]) return NO;
-    
-    if(length > 0 && value != NULL)
-    {
-        NSData *subdata = [[self data] subdataWithRange:NSMakeRange(loc, length)];
-#if __has_feature(objc_arc)
-        *value = [[NSString alloc] initWithData:subdata encoding:encoding];
-#else
-        *value = [[[NSString alloc] initWithData:subdata encoding:encoding] autorelease];
-#endif
-    }
-    
-    [self setScanLocation:loc + length];
-    return YES;
+    PSYRequestConcreteImplementation([self class], _cmd, [self class] != [PSYDataScanner class]);
+    return NO;
 }
 
 - (BOOL)scanUpToString:(NSString *)stopString intoString:(NSString **)value usingEncoding:(NSStringEncoding)encoding;
@@ -627,6 +609,15 @@ static void PSYRequestConcreteImplementation(Class cls, SEL sel, BOOL isSubclass
 
 - (id)initWithFileHandle:(NSFileHandle *)fileToScan
 {
+    @try
+    {
+        [fileToScan offsetInFile];
+    }
+    @catch(NSException *exception)
+    {
+        return (id)[[PSYStreamFileHandleScanner alloc] initWithFileHandle:fileToScan];
+    }
+    
     return (id)[[PSYFileHandleScanner alloc] initWithFileHandle:fileToScan];
 }
 

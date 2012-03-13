@@ -54,6 +54,7 @@
 }
 #endif
 
+- (unsigned long long)scanLocation { return _scanLocation; }
 - (void)setScanLocation:(unsigned long long)value
 {
     if(value > [_scannedData length])
@@ -62,10 +63,22 @@
     _scanLocation = value;
 }
 
+- (BOOL)scanData:(NSData **)data ofLength:(unsigned long long)length
+{
+    unsigned long long loc = [self scanLocation];
+    if(loc + length > [self dataLength]) return NO;
+    
+    if(data != NULL) *data = [[self data] subdataWithRange:NSMakeRange(loc, length)];
+    
+    [self setScanLocation:loc + length];
+    
+    return YES;
+}
+
 - (BOOL)scanData:(NSData *)data intoData:(NSData **)dataValue
 {
     unsigned long long length = [data length];
-    if(_scanLocation + length > [self dataLength]) return NO;
+    if(_scanLocation + length > _dataLength) return NO;
     
     if(length > 0)
     {
@@ -118,14 +131,31 @@
         if(!hasFoundData) scannedRange.length = _dataLength - _scanLocation;
     }
     
-    if(scannedRange.length == 0 ||
-       (scannedRange.location == _scanLocation && scannedRange.length == 0))
-        return NO;
+    if(scannedRange.length == 0) return NO;
     
     if(dataValue != NULL) *dataValue = [[self data] subdataWithRange:scannedRange];
     
     _scanLocation = NSMaxRange(scannedRange);
     
+    return YES;
+}
+
+- (BOOL)scanString:(NSString **)value ofLength:(unsigned long long)length usingEncoding:(NSStringEncoding)encoding
+{
+    unsigned long long loc = [self scanLocation];
+    if(loc + length > [self dataLength]) return NO;
+    
+    if(length > 0 && value != NULL)
+    {
+        NSData *subdata = [[self data] subdataWithRange:NSMakeRange(loc, length)];
+#if __has_feature(objc_arc)
+        *value = [[NSString alloc] initWithData:subdata encoding:encoding];
+#else
+        *value = [[[NSString alloc] initWithData:subdata encoding:encoding] autorelease];
+#endif
+    }
+    
+    [self setScanLocation:loc + length];
     return YES;
 }
 

@@ -37,7 +37,7 @@
     
     STAssertNotNil(scanner, @"Even if the data is empty, the scanner should not be nil.");
     
-    STAssertEquals([scanner scanLocation], (NSUInteger)0, @"The scan location of the scanner should start at zero.");
+    STAssertEquals([scanner scanLocation], (unsigned long long)0, @"The scan location of the scanner should start at zero.");
     
     STAssertTrue([scanner isAtEnd], @"When the data is empty, the scanner is at end from the beginning.");
 }
@@ -46,7 +46,7 @@
 {
     PSYDataScanner *scanner = [PSYDataScanner scannerWithData:[NSMutableData dataWithLength:10]];
     
-    STAssertEquals([scanner scanLocation], (NSUInteger)0, @"The scan location of the scanner should start at zero.");
+    STAssertEquals([scanner scanLocation], (unsigned long long)0, @"The scan location of the scanner should start at zero.");
     
     STAssertFalse([scanner isAtEnd], @"When the data is not empty, the scanner should not be at end.");
 }
@@ -86,11 +86,11 @@
     
     STAssertTrueNoThrow([scanner setScanLocation:0 relativeTo:PSYDataScannerLocationCurrent], @"Setting the location to the current should work and not throw an exception");
     
-    STAssertEquals([scanner scanLocation], (NSUInteger)5, @"The scan location should have remained the same.");
+    STAssertEquals([scanner scanLocation], (unsigned long long)5, @"The scan location should have remained the same.");
     
     STAssertTrueNoThrow([scanner setScanLocation:0 relativeTo:PSYDataScannerLocationBegin], @"Setting the location to the beginning should work and not throw an exception");
     
-    STAssertEquals([scanner scanLocation], (NSUInteger)0, @"The scan location should have been set to 0.");
+    STAssertEquals([scanner scanLocation], (unsigned long long)0, @"The scan location should have been set to 0.");
     
     STAssertTrueNoThrow([scanner setScanLocation:0 relativeTo:PSYDataScannerLocationEnd], @"Setting the location to the end should work and not throw an exception");
     
@@ -107,15 +107,15 @@
     
     STAssertTrueNoThrow([scanner setScanLocation:1 relativeTo:PSYDataScannerLocationCurrent], @"Setting the location to the current location plus 1 should work and not throw an exception");
     
-    STAssertEquals([scanner scanLocation], (NSUInteger)6, @"The scan location should have been set to current + 1.");
+    STAssertEquals([scanner scanLocation], (unsigned long long)6, @"The scan location should have been set to current + 1.");
     
     STAssertTrueNoThrow([scanner setScanLocation:1 relativeTo:PSYDataScannerLocationBegin], @"Setting the location to the beginning plus 1 should work and not throw an exception");
     
-    STAssertEquals([scanner scanLocation], (NSUInteger)1, @"The scan location should have been set to 1.");
+    STAssertEquals([scanner scanLocation], (unsigned long long)1, @"The scan location should have been set to 1.");
     
     STAssertFalseNoThrow([scanner setScanLocation:1 relativeTo:PSYDataScannerLocationEnd], @"Setting the location to the end should not work and not throw an exception");
     
-    STAssertEquals([scanner scanLocation], (NSUInteger)1, @"The scan location should have remained at the location where it was before.");
+    STAssertEquals([scanner scanLocation], (unsigned long long)1, @"The scan location should have remained at the location where it was before.");
 }
 
 - (void)testScanLocationNegativeRelativeTo
@@ -128,15 +128,15 @@
     
     STAssertTrueNoThrow([scanner setScanLocation:-1 relativeTo:PSYDataScannerLocationCurrent], @"Setting the location to the current location minus 1 should work and not throw an exception");
     
-    STAssertEquals([scanner scanLocation], (NSUInteger)4, @"The scan location should have been set to current - 1.");
+    STAssertEquals([scanner scanLocation], (unsigned long long)4, @"The scan location should have been set to current - 1.");
     
     STAssertFalseNoThrow([scanner setScanLocation:-1 relativeTo:PSYDataScannerLocationBegin], @"Setting the location to the beginning minus 1 should work and not throw an exception");
     
-    STAssertEquals([scanner scanLocation], (NSUInteger)4, @"The scan location should have remained at the location where it was before.");
+    STAssertEquals([scanner scanLocation], (unsigned long long)4, @"The scan location should have remained at the location where it was before.");
     
     STAssertTrueNoThrow([scanner setScanLocation:-1 relativeTo:PSYDataScannerLocationEnd], @"Setting the location to the end minus 1 should work and not throw an exception");
     
-    STAssertEquals([scanner scanLocation], (NSUInteger)9, @"The scan location should have been set to the length - 1.");
+    STAssertEquals([scanner scanLocation], (unsigned long long)9, @"The scan location should have been set to the length - 1.");
 }
 
 - (void)testScanInt8EmptyData
@@ -147,7 +147,7 @@
     
     STAssertFalseNoThrow([scanner scanInt8:&byte], @"The scanning of one byte should fail and not throw an exception");
     
-    STAssertEquals([scanner scanLocation], (NSUInteger)0, @"The scan location should not have changed.");
+    STAssertEquals([scanner scanLocation], (unsigned long long)0, @"The scan location should not have changed.");
     
     STAssertEquals(byte, (uint8_t)0, @"The scanned value should have not changed.");
 }
@@ -161,7 +161,7 @@
     
     STAssertTrueNoThrow([scanner scanInt8:&byte], @"The scanning of one byte should succeed and not throw an exception");
     
-    STAssertEquals([scanner scanLocation], (NSUInteger)1, @"The scan location should have been advanced by 1.");
+    STAssertEquals([scanner scanLocation], (unsigned long long)1, @"The scan location should have been advanced by 1.");
     
     STAssertEquals(byte, (uint8_t)0xDE, @"The scanned value should be equal to the first byte in the data.");
     
@@ -169,7 +169,7 @@
     
     STAssertTrueNoThrow([scanner scanInt8:&byte], @"The scanning of one byte should succeed and not throw an exception");
     
-    STAssertEquals([scanner scanLocation], (NSUInteger)2, @"The scan location should have been advanced by 1.");
+    STAssertEquals([scanner scanLocation], (unsigned long long)2, @"The scan location should have been advanced by 1.");
     
     STAssertEquals(byte, (uint8_t)0xAD, @"The scanned value should be equal to the first byte in the data.");
 }
@@ -182,7 +182,7 @@
     
     STAssertFalseNoThrow([scanner scanLittleEndianInt16:&byte], @"The scanning of little endian uint16_t should fail and not throw an exception");
     
-    STAssertEquals([scanner scanLocation], (NSUInteger)0, @"The scan location should not have changed.");
+    STAssertEquals([scanner scanLocation], (unsigned long long)0, @"The scan location should not have changed.");
     
     STAssertEquals(byte, (uint16_t)0, @"The scanned value should have not changed.");
 }
@@ -195,7 +195,7 @@
     
     STAssertFalseNoThrow([scanner scanLittleEndianInt16:&byte], @"The scanning of little endian uint16_t should fail and not throw an exception");
     
-    STAssertEquals([scanner scanLocation], (NSUInteger)0, @"The scan location should not have changed.");
+    STAssertEquals([scanner scanLocation], (unsigned long long)0, @"The scan location should not have changed.");
     
     STAssertEquals(byte, (uint16_t)0, @"The scanned value should have not changed.");
 }
@@ -208,7 +208,7 @@
     
     STAssertTrueNoThrow([scanner scanLittleEndianInt16:&byte], @"The scanning of little endian uint16_t should succeed and not throw an exception");
     
-    STAssertEquals([scanner scanLocation], (NSUInteger)2, @"The scan location should have been advanced by 2.");
+    STAssertEquals([scanner scanLocation], (unsigned long long)2, @"The scan location should have been advanced by 2.");
     
     STAssertEquals(byte, (uint16_t)0xDEAD, @"The scanned value should be equal to the first 2 bytes in the data.");
 }
@@ -221,7 +221,7 @@
     
     STAssertFalseNoThrow([scanner scanBigEndianInt16:&byte], @"The scanning of big endian uint16_t should fail and not throw an exception");
     
-    STAssertEquals([scanner scanLocation], (NSUInteger)0, @"The scan location should not have changed.");
+    STAssertEquals([scanner scanLocation], (unsigned long long)0, @"The scan location should not have changed.");
     
     STAssertEquals(byte, (uint16_t)0, @"The scanned value should have not changed.");
 }
@@ -234,7 +234,7 @@
     
     STAssertFalseNoThrow([scanner scanBigEndianInt16:&byte], @"The scanning of big endian uint16_t should fail and not throw an exception");
     
-    STAssertEquals([scanner scanLocation], (NSUInteger)0, @"The scan location should not have changed.");
+    STAssertEquals([scanner scanLocation], (unsigned long long)0, @"The scan location should not have changed.");
     
     STAssertEquals(byte, (uint16_t)0, @"The scanned value should have not changed.");
 }
@@ -247,7 +247,7 @@
     
     STAssertTrueNoThrow([scanner scanBigEndianInt16:&byte], @"The scanning of big endian uint16_t should succeed and not throw an exception");
     
-    STAssertEquals([scanner scanLocation], (NSUInteger)2, @"The scan location should have been advanced by 2.");
+    STAssertEquals([scanner scanLocation], (unsigned long long)2, @"The scan location should have been advanced by 2.");
     
     STAssertEquals(byte, (uint16_t)0xDEAD, @"The scanned value should be equal to the first 2 bytes in the data.");
 }
@@ -260,7 +260,7 @@
     
     STAssertFalseNoThrow([scanner scanLittleEndianInt32:&byte], @"The scanning of little endian uint32_t should fail and not throw an exception");
     
-    STAssertEquals([scanner scanLocation], (NSUInteger)0, @"The scan location should not have changed.");
+    STAssertEquals([scanner scanLocation], (unsigned long long)0, @"The scan location should not have changed.");
     
     STAssertEquals(byte, (uint32_t)0, @"The scanned value should have not changed.");
 }
@@ -273,7 +273,7 @@
     
     STAssertFalseNoThrow([scanner scanLittleEndianInt32:&byte], @"The scanning of little endian uint32_t should fail and not throw an exception");
     
-    STAssertEquals([scanner scanLocation], (NSUInteger)0, @"The scan location should not have changed.");
+    STAssertEquals([scanner scanLocation], (unsigned long long)0, @"The scan location should not have changed.");
     
     STAssertEquals(byte, (uint32_t)0, @"The scanned value should have not changed.");
 }
@@ -286,7 +286,7 @@
     
     STAssertTrueNoThrow([scanner scanLittleEndianInt32:&byte], @"The scanning of little endian uint32_t should succeed and not throw an exception");
     
-    STAssertEquals([scanner scanLocation], (NSUInteger)4, @"The scan location should have been advanced by 4.");
+    STAssertEquals([scanner scanLocation], (unsigned long long)4, @"The scan location should have been advanced by 4.");
     
     STAssertEquals(byte, (uint32_t)0xDEADBEEF, @"The scanned value should be equal to the first 4 bytes in the data.");
 }
@@ -299,7 +299,7 @@
     
     STAssertFalseNoThrow([scanner scanBigEndianInt32:&byte], @"The scanning of big endian uint32_t should fail and not throw an exception");
     
-    STAssertEquals([scanner scanLocation], (NSUInteger)0, @"The scan location should not have changed.");
+    STAssertEquals([scanner scanLocation], (unsigned long long)0, @"The scan location should not have changed.");
     
     STAssertEquals(byte, (uint32_t)0, @"The scanned value should have not changed.");
 }
@@ -312,7 +312,7 @@
     
     STAssertFalseNoThrow([scanner scanBigEndianInt32:&byte], @"The scanning of big endian uint32_t should fail and not throw an exception");
     
-    STAssertEquals([scanner scanLocation], (NSUInteger)0, @"The scan location should not have changed.");
+    STAssertEquals([scanner scanLocation], (unsigned long long)0, @"The scan location should not have changed.");
     
     STAssertEquals(byte, (uint32_t)0, @"The scanned value should have not changed.");
 }
@@ -325,7 +325,7 @@
     
     STAssertTrueNoThrow([scanner scanBigEndianInt32:&byte], @"The scanning of big endian uint32_t should succeed and not throw an exception");
     
-    STAssertEquals([scanner scanLocation], (NSUInteger)4, @"The scan location should have been advanced by 4.");
+    STAssertEquals([scanner scanLocation], (unsigned long long)4, @"The scan location should have been advanced by 4.");
     
     STAssertEquals(byte, (uint32_t)0xDEADBEEF, @"The scanned value should be equal to the first 4 bytes in the data.");
 }
@@ -338,7 +338,7 @@
     
     STAssertFalseNoThrow([scanner scanLittleEndianInt64:&byte], @"The scanning of little endian uint64_t should fail and not throw an exception");
     
-    STAssertEquals([scanner scanLocation], (NSUInteger)0, @"The scan location should not have changed.");
+    STAssertEquals([scanner scanLocation], (unsigned long long)0, @"The scan location should not have changed.");
     
     STAssertEquals(byte, (uint64_t)0, @"The scanned value should have not changed.");
 }
@@ -351,7 +351,7 @@
     
     STAssertFalseNoThrow([scanner scanLittleEndianInt64:&byte], @"The scanning of little endian uint64_t should fail and not throw an exception");
     
-    STAssertEquals([scanner scanLocation], (NSUInteger)0, @"The scan location should not have changed.");
+    STAssertEquals([scanner scanLocation], (unsigned long long)0, @"The scan location should not have changed.");
     
     STAssertEquals(byte, (uint64_t)0, @"The scanned value should have not changed.");
 }
@@ -364,7 +364,7 @@
     
     STAssertTrueNoThrow([scanner scanLittleEndianInt64:&byte], @"The scanning of little endian uint64_t should succeed and not throw an exception");
     
-    STAssertEquals([scanner scanLocation], (NSUInteger)8, @"The scan location should have been advanced by 8.");
+    STAssertEquals([scanner scanLocation], (unsigned long long)8, @"The scan location should have been advanced by 8.");
     
     STAssertEquals(byte, (uint64_t)0xDEADBEEF6699CCFF, @"The scanned value should be equal to the first 8 bytes in the data.");
 }
@@ -377,7 +377,7 @@
     
     STAssertFalseNoThrow([scanner scanBigEndianInt64:&byte], @"The scanning of big endian uint64_t should fail and not throw an exception");
     
-    STAssertEquals([scanner scanLocation], (NSUInteger)0, @"The scan location should not have changed.");
+    STAssertEquals([scanner scanLocation], (unsigned long long)0, @"The scan location should not have changed.");
     
     STAssertEquals(byte, (uint64_t)0, @"The scanned value should have not changed.");
 }
@@ -390,7 +390,7 @@
     
     STAssertFalseNoThrow([scanner scanBigEndianInt64:&byte], @"The scanning of big endian uint64_t should fail and not throw an exception");
     
-    STAssertEquals([scanner scanLocation], (NSUInteger)0, @"The scan location should not have changed.");
+    STAssertEquals([scanner scanLocation], (unsigned long long)0, @"The scan location should not have changed.");
     
     STAssertEquals(byte, (uint64_t)0, @"The scanned value should have not changed.");
 }
@@ -403,7 +403,7 @@
     
     STAssertTrueNoThrow([scanner scanBigEndianInt64:&byte], @"The scanning of big endian uint64_t should succeed and not throw an exception");
     
-    STAssertEquals([scanner scanLocation], (NSUInteger)8, @"The scan location should have been advanced by 8.");
+    STAssertEquals([scanner scanLocation], (unsigned long long)8, @"The scan location should have been advanced by 8.");
     
     STAssertEquals(byte, (uint64_t)0xDEADBEEF6699CCFF, @"The scanned value should be equal to the first 8 bytes in the data.");
 }
@@ -419,7 +419,7 @@
     
     STAssertTrueNoThrow([scanner scanLittleEndianVarint32:&scannedValue], @"The scanning of little endian varint 32 should succeed and not throw an exception.");
     
-    STAssertEquals([scanner scanLocation], (NSUInteger)2, @"The scan location should have been advanced by 2.");
+    STAssertEquals([scanner scanLocation], (unsigned long long)2, @"The scan location should have been advanced by 2.");
     
     STAssertEquals(scannedValue, (uint32_t)150, @"The scanned value should be equal to the varint encoded integer in the data.");
     
@@ -437,7 +437,7 @@
     
     STAssertTrueNoThrow([scanner scanLittleEndianVarint64:&scannedValue], @"The scanning of little endian varint 64 should succeed and not throw an exception.");
     
-    STAssertEquals([scanner scanLocation], (NSUInteger)2, @"The scan location should have been advanced by 2.");
+    STAssertEquals([scanner scanLocation], (unsigned long long)2, @"The scan location should have been advanced by 2.");
     
     STAssertEquals(scannedValue, (uint64_t)150, @"The scanned value should be equal to the varint encoded integer in the data.");
     
@@ -455,7 +455,7 @@
     
     STAssertTrueNoThrow([scanner scanBigEndianVarint32:&scannedValue], @"The scanning of big endian varint 32 should succeed and not throw an exception.");
     
-    STAssertEquals([scanner scanLocation], (NSUInteger)5, @"The scan location should have been advanced by 5.");
+    STAssertEquals([scanner scanLocation], (unsigned long long)5, @"The scan location should have been advanced by 5.");
     
     STAssertEquals(scannedValue, (uint32_t)150, @"The scanned value should be equal to the varint encoded integer in the data.");
     
@@ -473,7 +473,7 @@
     
     STAssertTrueNoThrow([scanner scanBigEndianVarint64:&scannedValue], @"The scanning of big endian varint 64 should succeed and not throw an exception.");
     
-    STAssertEquals([scanner scanLocation], (NSUInteger)10, @"The scan location should have been advanced by 10.");
+    STAssertEquals([scanner scanLocation], (unsigned long long)10, @"The scan location should have been advanced by 10.");
     
     STAssertEquals(scannedValue, (uint64_t)150, @"The scanned value should be equal to the varint encoded integer in the data.");
     
@@ -491,7 +491,7 @@
     
     STAssertTrueNoThrow([scanner scanLittleEndianSVarint32:&scannedValue], @"The scanning of little endian signed varint 32 should succeed and not throw an exception.");
     
-    STAssertEquals([scanner scanLocation], (NSUInteger)5, @"The scan location should have been advanced by 5");
+    STAssertEquals([scanner scanLocation], (unsigned long long)5, @"The scan location should have been advanced by 5");
     
     STAssertEquals(scannedValue, (int32_t)-150, @"The scanned value should be equal to the varint encoded integer in the data.");
     
@@ -509,7 +509,7 @@
     
     STAssertTrueNoThrow([scanner scanLittleEndianSVarint64:&scannedValue], @"The scanning of little endian signed varint 64 should succeed and not throw an exception.");
     
-    STAssertEquals([scanner scanLocation], (NSUInteger)10, @"The scan location should have been advanced by 10.");
+    STAssertEquals([scanner scanLocation], (unsigned long long)10, @"The scan location should have been advanced by 10.");
     
     STAssertEquals(scannedValue, (int64_t)-150, @"The scanned value should be equal to the varint encoded integer in the data.");
     
@@ -527,7 +527,7 @@
     
     STAssertTrueNoThrow([scanner scanBigEndianSVarint32:&scannedValue], @"The scanning of big endian signed varint 32 should succeed and not throw an exception.");
     
-    STAssertEquals([scanner scanLocation], (NSUInteger)5, @"The scan location should have been advanced by 5");
+    STAssertEquals([scanner scanLocation], (unsigned long long)5, @"The scan location should have been advanced by 5");
     
     STAssertEquals(scannedValue, (int32_t)-150, @"The scanned value should be equal to the varint encoded integer in the data.");
     
@@ -545,7 +545,7 @@
     
     STAssertTrueNoThrow([scanner scanBigEndianSVarint64:&scannedValue], @"The scanning of big endian signed varint 64 should succeed and not throw an exception.");
     
-    STAssertEquals([scanner scanLocation], (NSUInteger)9, @"The scan location should have been advanced by 9.");
+    STAssertEquals([scanner scanLocation], (unsigned long long)9, @"The scan location should have been advanced by 9.");
     
     STAssertEquals(scannedValue, (int64_t)-150, @"The scanned value should be equal to the varint encoded integer in the data.");
     
@@ -563,7 +563,7 @@
     
     STAssertTrueNoThrow([scanner scanLittleEndianZigZagVarint32:&scannedValue], @"The scanning of little endian zig zag varint 32 should succeed and not throw an exception.");
     
-    STAssertEquals([scanner scanLocation], (NSUInteger)2, @"The scan location should have been advanced by 2.");
+    STAssertEquals([scanner scanLocation], (unsigned long long)2, @"The scan location should have been advanced by 2.");
     
     STAssertEquals(scannedValue, (int32_t)-150, @"The scanned value should be equal to the varint encoded integer in the data.");
     
@@ -581,7 +581,7 @@
     
     STAssertTrueNoThrow([scanner scanLittleEndianZigZagVarint64:&scannedValue], @"The scanning of little endian zig zag varint 64 should succeed and not throw an exception.");
     
-    STAssertEquals([scanner scanLocation], (NSUInteger)2, @"The scan location should have been advanced by 2.");
+    STAssertEquals([scanner scanLocation], (unsigned long long)2, @"The scan location should have been advanced by 2.");
     
     STAssertEquals(scannedValue, (int64_t)-150, @"The scanned value should be equal to the varint encoded integer in the data.");
     
@@ -599,7 +599,7 @@
     
     STAssertTrueNoThrow([scanner scanBigEndianZigZagVarint32:&scannedValue], @"The scanning of big endian zig zag varint 32 should succeed and not throw an exception.");
     
-    STAssertEquals([scanner scanLocation], (NSUInteger)5, @"The scan location should have been advanced by 5");
+    STAssertEquals([scanner scanLocation], (unsigned long long)5, @"The scan location should have been advanced by 5");
     
     STAssertEquals(scannedValue, (int32_t)-150, @"The scanned value should be equal to the varint encoded integer in the data.");
     
@@ -617,7 +617,7 @@
     
     STAssertTrueNoThrow([scanner scanBigEndianZigZagVarint64:&scannedValue], @"The scanning of big endian zig zag varint 64 should succeed and not throw an exception.");
     
-    STAssertEquals([scanner scanLocation], (NSUInteger)9, @"The scan location should have been advanced by 9.");
+    STAssertEquals([scanner scanLocation], (unsigned long long)9, @"The scan location should have been advanced by 9.");
     
     STAssertEquals(scannedValue, (int64_t)-150, @"The scanned value should be equal to the varint encoded integer in the data.");
     
@@ -632,7 +632,7 @@
     
     STAssertFalseNoThrow([scanner scanFloat:&byte], @"The scanning of one float should fail and not throw an exception");
     
-    STAssertEquals([scanner scanLocation], (NSUInteger)0, @"The scan location should not have changed.");
+    STAssertEquals([scanner scanLocation], (unsigned long long)0, @"The scan location should not have changed.");
     
     STAssertEquals(byte, (float)0, @"The scanned value should have not changed.");
 }
@@ -645,7 +645,7 @@
     
     STAssertFalseNoThrow([scanner scanFloat:&byte], @"The scanning of one float should fail and not throw an exception");
     
-    STAssertEquals([scanner scanLocation], (NSUInteger)0, @"The scan location should not have changed.");
+    STAssertEquals([scanner scanLocation], (unsigned long long)0, @"The scan location should not have changed.");
     
     STAssertEquals(byte, (float)0, @"The scanned value should have not changed.");
 }
@@ -658,7 +658,7 @@
     
     STAssertTrueNoThrow([scanner scanFloat:&byte], @"The scanning of one float should succeed and not throw an exception");
     
-    STAssertEquals([scanner scanLocation], (NSUInteger)4, @"The scan location should have been advanced by 4.");
+    STAssertEquals([scanner scanLocation], (unsigned long long)4, @"The scan location should have been advanced by 4.");
     
     STAssertEquals(byte, (float)150000.0f, @"The scanned value should be equal to the first 4 bytes in the data.");
 }
@@ -671,7 +671,7 @@
     
     STAssertFalseNoThrow([scanner scanDouble:&byte], @"The scanning of one double should fail and not throw an exception");
     
-    STAssertEquals([scanner scanLocation], (NSUInteger)0, @"The scan location should not have changed.");
+    STAssertEquals([scanner scanLocation], (unsigned long long)0, @"The scan location should not have changed.");
     
     STAssertEquals(byte, (double)0, @"The scanned value should have not changed.");
 }
@@ -684,7 +684,7 @@
     
     STAssertFalseNoThrow([scanner scanDouble:&byte], @"The scanning of one double should fail and not throw an exception");
     
-    STAssertEquals([scanner scanLocation], (NSUInteger)0, @"The scan location should not have changed.");
+    STAssertEquals([scanner scanLocation], (unsigned long long)0, @"The scan location should not have changed.");
     
     STAssertEquals(byte, (double)0, @"The scanned value should have not changed.");
 }
@@ -697,7 +697,7 @@
     
     STAssertTrueNoThrow([scanner scanDouble:&byte], @"The scanning of one double should succeed and not throw an exception");
     
-    STAssertEquals([scanner scanLocation], (NSUInteger)8, @"The scan location should have been advanced by 8.");
+    STAssertEquals([scanner scanLocation], (unsigned long long)8, @"The scan location should have been advanced by 8.");
     
     STAssertEquals(byte, (double)150000.0f, @"The scanned value should be equal to the first 8 bytes in the data.");
 }
@@ -710,7 +710,7 @@
     
     STAssertFalseNoThrow([scanner scanSwappedFloat:&byte], @"The scanning of one swapped float should fail and not throw an exception");
     
-    STAssertEquals([scanner scanLocation], (NSUInteger)0, @"The scan location should not have changed.");
+    STAssertEquals([scanner scanLocation], (unsigned long long)0, @"The scan location should not have changed.");
     
     STAssertEquals(byte, (float)0, @"The scanned value should have not changed.");
 }
@@ -723,7 +723,7 @@
     
     STAssertFalseNoThrow([scanner scanSwappedFloat:&byte], @"The scanning of one swapped float should fail and not throw an exception");
     
-    STAssertEquals([scanner scanLocation], (NSUInteger)0, @"The scan location should not have changed.");
+    STAssertEquals([scanner scanLocation], (unsigned long long)0, @"The scan location should not have changed.");
     
     STAssertEquals(byte, (float)0, @"The scanned value should have not changed.");
 }
@@ -736,7 +736,7 @@
     
     STAssertTrueNoThrow([scanner scanSwappedFloat:&byte], @"The scanning of one swapped float should succeed and not throw an exception");
     
-    STAssertEquals([scanner scanLocation], (NSUInteger)4, @"The scan location should have been advanced by 4.");
+    STAssertEquals([scanner scanLocation], (unsigned long long)4, @"The scan location should have been advanced by 4.");
     
     STAssertEquals(byte, (float)150000.0f, @"The scanned value should be equal to the first 4 bytes in the data.");
 }
@@ -749,7 +749,7 @@
     
     STAssertFalseNoThrow([scanner scanSwappedDouble:&byte], @"The scanning of one swapped double should fail and not throw an exception");
     
-    STAssertEquals([scanner scanLocation], (NSUInteger)0, @"The scan location should not have changed.");
+    STAssertEquals([scanner scanLocation], (unsigned long long)0, @"The scan location should not have changed.");
     
     STAssertEquals(byte, (double)0, @"The scanned value should have not changed.");
 }
@@ -762,7 +762,7 @@
     
     STAssertFalseNoThrow([scanner scanSwappedDouble:&byte], @"The scanning of one swapped double should fail and not throw an exception");
     
-    STAssertEquals([scanner scanLocation], (NSUInteger)0, @"The scan location should not have changed.");
+    STAssertEquals([scanner scanLocation], (unsigned long long)0, @"The scan location should not have changed.");
     
     STAssertEquals(byte, (double)0, @"The scanned value should have not changed.");
 }
@@ -775,7 +775,7 @@
     
     STAssertTrueNoThrow([scanner scanSwappedDouble:&byte], @"The scanning of one swapped double should succeed and not throw an exception");
     
-    STAssertEquals([scanner scanLocation], (NSUInteger)8, @"The scan location should have been advanced by 8.");
+    STAssertEquals([scanner scanLocation], (unsigned long long)8, @"The scan location should have been advanced by 8.");
     
     STAssertEquals(byte, (double)150000.0f, @"The scanned value should be equal to the first 8 bytes in the data.");
 }
@@ -788,7 +788,7 @@
     
     STAssertFalseNoThrow([scanner scanData:&read ofLength:4], @"The scanning of four bytes in NSData should fail and not throw an exception");
     
-    STAssertEquals([scanner scanLocation], (NSUInteger)0, @"The scan location should not have changed.");
+    STAssertEquals([scanner scanLocation], (unsigned long long)0, @"The scan location should not have changed.");
     
     STAssertEqualObjects(read, nil, @"The scanned value should not have changed.");
 }
@@ -801,7 +801,7 @@
     
     STAssertFalseNoThrow([scanner scanData:&read ofLength:4], @"The scanning of four bytes in NSData should fail and not throw an exception");
     
-    STAssertEquals([scanner scanLocation], (NSUInteger)0, @"The scan location should not have changed.");
+    STAssertEquals([scanner scanLocation], (unsigned long long)0, @"The scan location should not have changed.");
     
     STAssertEqualObjects(read, nil, @"The scanned value should not have changed.");
 }
@@ -815,7 +815,7 @@
     
     STAssertTrueNoThrow([scanner scanData:&read ofLength:4], @"The scanning of four bytes in NSData should succeed and not throw an exception");
     
-    STAssertEquals([scanner scanLocation], (NSUInteger)4, @"The scan location should been advanced by the length read.");
+    STAssertEquals([scanner scanLocation], (unsigned long long)4, @"The scan location should been advanced by the length read.");
     
     STAssertEqualObjects(read, expected, @"The scanned value should be equal to the four first bytes.");
 }
@@ -829,7 +829,7 @@
     
     STAssertFalseNoThrow([scanner scanData:search intoData:&read], @"The scanning of two bytes of NSData should fail and not throw an exception");
     
-    STAssertEquals([scanner scanLocation], (NSUInteger)0, @"The scan location should not have changed.");
+    STAssertEquals([scanner scanLocation], (unsigned long long)0, @"The scan location should not have changed.");
     
     STAssertEqualObjects(read, nil, @"The scanned value should not have changed.");
 }
@@ -843,7 +843,7 @@
     
     STAssertFalseNoThrow([scanner scanData:search intoData:&read], @"The scanning of two bytes of NSData should fail and not throw an exception");
     
-    STAssertEquals([scanner scanLocation], (NSUInteger)0, @"The scan location should not have changed.");
+    STAssertEquals([scanner scanLocation], (unsigned long long)0, @"The scan location should not have changed.");
     
     STAssertEqualObjects(read, nil, @"The scanned value should not have changed.");
 }
@@ -857,7 +857,7 @@
     
     STAssertFalseNoThrow([scanner scanData:search intoData:&read], @"The scanning of two bytes of NSData should fail and not throw an exception");
     
-    STAssertEquals([scanner scanLocation], (NSUInteger)0, @"The scan location should not have changed.");
+    STAssertEquals([scanner scanLocation], (unsigned long long)0, @"The scan location should not have changed.");
     
     STAssertEqualObjects(read, nil, @"The scanned value should not have changed.");
 }
@@ -872,7 +872,7 @@
     
     STAssertTrueNoThrow([scanner scanData:search intoData:&read], @"The scanning of two bytes of NSData should succeed and not throw an exception");
     
-    STAssertEquals([scanner scanLocation], (NSUInteger)2, @"The scan location should been advanced by the length read.");
+    STAssertEquals([scanner scanLocation], (unsigned long long)2, @"The scan location should been advanced by the length read.");
     
     STAssertEqualObjects(read, expected, @"The scanned value should be equal to the two first bytes.");
 }
@@ -886,7 +886,7 @@
     
     STAssertFalseNoThrow([scanner scanUpToData:search intoData:&read], @"The scanning of bytes up to NSData should fail and not throw an exception");
     
-    STAssertEquals([scanner scanLocation], (NSUInteger)0, @"The scan location should not have changed.");
+    STAssertEquals([scanner scanLocation], (unsigned long long)0, @"The scan location should not have changed.");
     
     STAssertEqualObjects(read, nil, @"The scanned value should not have changed.");
 }
@@ -914,7 +914,7 @@
     
     STAssertFalseNoThrow([scanner scanUpToData:search intoData:&read], @"The scanning of bytes up to NSData should fail and not throw an exception");
     
-    STAssertEquals([scanner scanLocation], (NSUInteger)0, @"The scan location should have not been advanced.");
+    STAssertEquals([scanner scanLocation], (unsigned long long)0, @"The scan location should have not been advanced.");
     
     STAssertEqualObjects(read, nil, @"The scanned value should not have changed.");
 }
@@ -929,7 +929,7 @@
     
     STAssertTrueNoThrow([scanner scanUpToData:search intoData:&read], @"The scanning of bytes up to NSData should succeed and not throw an exception");
     
-    STAssertEquals([scanner scanLocation], (NSUInteger)1, @"The scan location should been advanced at the beginning of the searched data.");
+    STAssertEquals([scanner scanLocation], (unsigned long long)1, @"The scan location should been advanced at the beginning of the searched data.");
     
     STAssertEqualObjects(read, expected, @"The scanned data should be equal to the data before the searched data.");
 }

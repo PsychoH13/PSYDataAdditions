@@ -26,16 +26,5 @@
 #import "PSYDataScanner.h"
 
 @interface PSYFileHandleScanner : PSYDataScanner
-{
-@private
-    NSFileHandle       *_fileHandle;
-    unsigned long long  _fileLength;
-    unsigned long long  _fileScanLocation;
-    
-    NSData             *_cacheData;
-    unsigned long long  _cacheOffset;
-    unsigned long long  _cacheScanLocation;
-    
-    unsigned int        _useCacheOffset:1;
-}
+
 @end
