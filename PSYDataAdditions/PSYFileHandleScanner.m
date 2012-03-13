@@ -162,15 +162,50 @@ static BOOL PSYLocationInRange(PSYRange range, unsigned long long loc)
     return _useCacheOffset ? _cacheData : nil;
 }
 
-- (BOOL)scanData:(NSData **)data ofLength:(unsigned long long)length
+- (BOOL)scanData:(NSData **)value ofLength:(unsigned long long)length
 {
     unsigned long long loc = _cacheRange.location + _cacheScanLocation;
-    if(loc + length > _fileLength) return NO;
+    if(length == 0 || loc + length > _fileLength) return NO;
     
-    if(data != NULL)
+    if(value != NULL)
     {
-        [_fileHandle seekToFileOffset:loc];
-        *data = [_fileHandle readDataOfLength:length];
+        NSMutableData      *data         = [[NSMutableData alloc] initWithCapacity:length];
+        NSData             *cacheData    = [_cacheData copy];
+        PSYRange            cacheRange   = _cacheRange;
+        unsigned long long  cacheScanLoc = _cacheScanLocation;
+        
+        for(unsigned long long read = 0; read < length;)
+        {
+            if(cacheScanLoc >= cacheRange.length)
+            {
+                @autoreleasepool
+                {
+                    RELEASE(cacheData);
+                    cacheData = RETAIN([_fileHandle readDataOfLength:CHUNK_SIZE]);
+                }
+                
+                cacheRange.length   = [cacheData length];
+                cacheRange.location = [_fileHandle offsetInFile] - cacheRange.length;
+                cacheScanLoc        = 0;
+            }
+            
+            unsigned long long availLen = MIN(length - read, cacheRange.length - cacheScanLoc);
+            
+            const unsigned char *buf = [cacheData bytes];
+            [data appendBytes:buf + cacheScanLoc length:availLen];
+            
+            read         += availLen;
+            cacheScanLoc += availLen;
+        }
+        
+        *value = AUTORELEASE([data copy]);
+        
+        [_cacheData setData:cacheData];
+        _cacheRange        = cacheRange;
+        _cacheScanLocation = cacheScanLoc;
+        
+        RELEASE(cacheData);
+        RELEASE(data);
     }
     
     [self setScanLocation:loc + length];
@@ -222,6 +257,8 @@ static BOOL PSYLocationInRange(PSYRange range, unsigned long long loc)
     
     if(hasFoundData)
     {
+        // A "proper" implementation would extract the data from the actual file
+        // but it doesn't really matter as it is supposed to be equal
         if(value != NULL) *value = AUTORELEASE([data copy]);
     
         [_cacheData setData:cacheData];
@@ -349,54 +386,24 @@ static BOOL PSYLocationInRange(PSYRange range, unsigned long long loc)
 
 - (BOOL)scanString:(NSString **)value ofLength:(unsigned long long)length usingEncoding:(NSStringEncoding)encoding
 {
-    unsigned long long loc = _cacheRange.location + _cacheScanLocation;
-    if(loc + length > _fileLength) return NO;
+    // If the caller does not need the result it's like advancing the scan location by length
+    if(value == NULL) return [self scanData:NULL ofLength:length];
     
-    if(length > 0 && value != NULL)
+    BOOL success = NO;
+    NSString *ret  = nil;
+    
+    @autoreleasepool
     {
-        NSMutableData *data = [[NSMutableData alloc] initWithCapacity:length];
-        
-        NSData             *cacheData    = [_cacheData copy];
-        PSYRange            cacheRange   = _cacheRange;
-        unsigned long long  cacheScanLoc = _cacheScanLocation;
-        
-        for(unsigned long long read = 0; read < length;)
-        {
-            if(cacheScanLoc >= cacheRange.length)
-            {
-                @autoreleasepool
-                {
-                    RELEASE(cacheData);
-                    cacheData = RETAIN([_fileHandle readDataOfLength:CHUNK_SIZE]);
-                }
-                
-                cacheRange.length   = [cacheData length];
-                cacheRange.location = [_fileHandle offsetInFile] - cacheRange.length;
-                cacheScanLoc        = 0;
-            }
-            
-            unsigned long long availLen = MIN(length - read, cacheRange.length - cacheScanLoc);
-            
-            const unsigned char *buf = [cacheData bytes];
-            [data appendBytes:buf + cacheScanLoc length:availLen];
-            
-            read         += availLen;
-            cacheScanLoc += availLen;
-        }
-        
-        *value = AUTORELEASE([[NSString alloc] initWithData:data encoding:encoding]);
-        
-        [_cacheData setData:cacheData];
-        _cacheRange        = cacheRange;
-        _cacheScanLocation = cacheScanLoc;
-        
-        RELEASE(cacheData);
-        RELEASE(data);
+        NSData   *data = nil;
+        success = [self scanData:&data ofLength:length];
+        if(success) ret = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
     }
     
-    [self setScanLocation:loc + length];
+    // We do not actually care if the data was decoded properly...
+    // We might want to in the future
+    if(success) *value = AUTORELEASE(ret);
     
-    return YES;
+    return success;
 }
 
 - (BOOL)scanNullTerminatedString:(NSString **)value withEncoding:(NSStringEncoding)encoding
