@@ -17,3 +17,5 @@
 #define RELEASE(obj) do { id __obj = obj; obj = nil; [__obj release]; } while(NO)
 #define AUTORELEASE(obj) [obj autorelease]
 #endif
+
+void PSYRequestConcreteImplementation(Class cls, SEL sel, BOOL isSubclass);

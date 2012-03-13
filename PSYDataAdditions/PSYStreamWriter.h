@@ -10,13 +10,18 @@
 
 @interface PSYStreamWriter : NSObject
 
-+ (id)scannerWithInputStream:(NSOutputStream *)aStream;
-- (id)initWithInputStream:(NSOutputStream *)aStream;
-
-+ (id)scannerWithInputStream:(NSOutputStream *)aStream closeOnDealloc:(BOOL)closeOnDealloc;
-- (id)initWithInputStream:(NSOutputStream *)aStream closeOnDealloc:(BOOL)closeOnDealloc;
-
 - (void)groupWrites:(void(^)(PSYStreamWriter *writer))writes completion:(void(^)(void))completion;
+- (void)writeBytes:(const uint8_t *)buffer ofLength:(NSUInteger)length;
+
+@end
+
+@interface PSYStreamWriter (PSYStreamWriterCreation)
+
++ (id)writerWithOutputStream:(NSOutputStream *)aStream;
++ (id)writerWithOutputStream:(NSOutputStream *)aStream closeOnDealloc:(BOOL)closeOnDealloc;
+
+- (id)initWithOutputStream:(NSOutputStream *)aStream;
+- (id)initWithOutputStream:(NSOutputStream *)aStream closeOnDealloc:(BOOL)closeOnDealloc;
 
 @end
 
