@@ -34,6 +34,17 @@
     PSYRequestConcreteImplementation([self class], _cmd, [self class] != [PSYStreamWriter class]);
 }
 
+- (id<PSYStreamWriterDelegate>)delegate
+{
+    PSYRequestConcreteImplementation([self class], _cmd, [self class] != [PSYStreamWriter class]);
+    return nil;
+}
+
+- (void)setDelegate:(id<PSYStreamWriterDelegate>)value
+{
+    PSYRequestConcreteImplementation([self class], _cmd, [self class] != [PSYStreamWriter class]);
+}
+
 @end
 
 @implementation PSYStreamWriter (PSYStreamWriterCreation)

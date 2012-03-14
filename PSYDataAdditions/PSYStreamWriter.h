@@ -8,11 +8,22 @@
 
 #import <Foundation/Foundation.h>
 
+@protocol PSYStreamWriterDelegate;
+
 @interface PSYStreamWriter : NSObject
 
 - (void)groupWrites:(void(^)(PSYStreamWriter *writer))writes completion:(void(^)(void))completion;
 - (void)writeBytes:(const uint8_t *)buffer ofLength:(NSUInteger)length;
 
+@property(nonatomic, assign) id<PSYStreamWriterDelegate> delegate;
+
+@end
+
+@protocol PSYStreamWriterDelegate <NSObject>
+@optional
+- (void)streamWriter:(PSYStreamWriter *)sender didReceiveError:(NSError *)error;
+- (void)streamWriterDidFinishWriting:(PSYStreamWriter *)sender;
+- (void)streamWriterDidEncounterEnd:(PSYStreamWriter *)sender;
 @end
 
 @interface PSYStreamWriter (PSYStreamWriterCreation)
