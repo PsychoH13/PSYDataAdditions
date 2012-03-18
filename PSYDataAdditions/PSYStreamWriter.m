@@ -34,6 +34,11 @@
     PSYRequestConcreteImplementation([self class], _cmd, [self class] != [PSYStreamWriter class]);
 }
 
+- (void)writeInputStream:(NSInputStream *)aStream completion:(void(^)(void))completion;
+{
+    PSYRequestConcreteImplementation([self class], _cmd, [self class] != [PSYStreamWriter class]);
+}
+
 - (id<PSYStreamWriterDelegate>)delegate
 {
     PSYRequestConcreteImplementation([self class], _cmd, [self class] != [PSYStreamWriter class]);

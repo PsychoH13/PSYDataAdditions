@@ -14,6 +14,7 @@
 
 - (void)groupWrites:(void(^)(PSYStreamWriter *writer))writes completion:(void(^)(void))completion;
 - (void)writeBytes:(const uint8_t *)buffer ofLength:(NSUInteger)length;
+- (void)writeInputStream:(NSInputStream *)aStream completion:(void(^)(void))completion;
 
 @property(nonatomic, assign) id<PSYStreamWriterDelegate> delegate;
 

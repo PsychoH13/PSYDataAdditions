@@ -21,6 +21,11 @@
 @interface PSYStreamWriterHelperUnit : PSYStreamWriterHelper
 @end
 
+@interface PSYStreamWriterHelperInputStream : PSYStreamWriterHelper <NSStreamDelegate>
+- (id)initWithParentStreamWriter:(PSYStreamWriter *)parent;
+- (id)initWithInputStream:(NSInputStream *)aStream parentStreamWriter:(PSYStreamWriter *)parent completionBlock:(void(^)(void))completion;
+@end
+
 @interface PSYStreamWriterHelperGroup : PSYStreamWriterHelper
 - (id)initWithParentStreamWriter:(PSYStreamWriter *)parent;
 - (id)initWithParentStreamWriter:(PSYStreamWriter *)parent completionBlock:(void(^)(void))completion;
@@ -105,6 +110,11 @@
     }
 }
 
+- (void)writeInputStream:(NSInputStream *)aStream completion:(void(^)(void))completion;
+{
+    [rootGroup writeInputStream:aStream completion:completion];
+}
+
 - (void)stream:(NSStream *)aStream handleEvent:(NSStreamEvent)eventCode
 {
     if(eventCode & NSStreamEventHasSpaceAvailable)
@@ -123,6 +133,11 @@
 
 @implementation PSYStreamWriterHelper
 @synthesize parentStreamWriter;
+
+- (id)init
+{
+    return [self initWithParentStreamWriter:nil];
+}
 
 - (id)initWithParentStreamWriter:(PSYStreamWriter *)parent
 {
@@ -166,6 +181,16 @@
     [super dealloc];
 }
 #endif
+
+- (void)writeInputStream:(NSInputStream *)aStream completion:(void (^)(void))completion;
+{
+    [[self parentStreamWriter] writeInputStream:aStream completion:completion];
+}
+
+- (void)groupWrites:(void (^)(PSYStreamWriter *))writes completion:(void (^)(void))completion
+{
+    [[self parentStreamWriter] groupWrites:writes completion:completion];
+}
 
 - (void)writeBytes:(const uint8_t *)buffer ofLength:(NSUInteger)length
 {
@@ -229,11 +254,6 @@
 {
     NSMutableArray *helperQueue;
     void (^completionBlock)(void);
-}
-
-- (id)init
-{
-    return [self initWithParentStreamWriter:nil completionBlock:nil];
 }
 
 - (id)initWithParentStreamWriter:(PSYStreamWriter *)parent
@@ -318,6 +338,157 @@
     
     writes(group);
     RELEASE(group);
+}
+
+- (void)writeInputStream:(NSInputStream *)aStream completion:(void(^)(void))completion;
+{
+    if(aStream == nil) return;
+    
+    PSYStreamWriterHelperInputStream *writer = [[PSYStreamWriterHelperInputStream alloc] initWithInputStream:aStream parentStreamWriter:self completionBlock:completion];
+    
+    @synchronized(self) { [helperQueue addObject:writer]; }
+    
+    RELEASE(writer);
+}
+
+@end
+
+@implementation PSYStreamWriterHelperInputStream
+{
+    NSInputStream             *inputStream;
+    PSYStreamWriterHelperUnit *dataHelper;
+    void (^completionBlock)(void);
+}
+
+- (id)initWithParentStreamWriter:(PSYStreamWriter *)parent;
+{
+    return [self initWithInputStream:nil parentStreamWriter:parent completionBlock:nil];
+}
+
+- (id)initWithInputStream:(NSInputStream *)aStream parentStreamWriter:(PSYStreamWriter *)parent completionBlock:(void(^)(void))completion;
+{
+    if(aStream == nil)
+    {
+        RELEASE(self);
+        return nil;
+    }
+    
+    if((self = [super initWithParentStreamWriter:parent]))
+    {
+        completionBlock = [completion copy];
+        dataHelper      = [[PSYStreamWriterHelperUnit alloc] initWithParentStreamWriter:self];
+        inputStream     = RETAIN(aStream);
+        [inputStream setDelegate:self];
+    }
+    
+    return self;
+}
+
+- (void)dealloc
+{
+    [inputStream close];
+    
+#if !__has_feature(objc_arc)
+    [inputStream release];
+    [completionBlock release];
+    [dataHelper release];
+    [super dealloc];
+#endif
+}
+
+- (void)writeInputStream:(NSInputStream *)aStream completion:(void (^)(void))completion;
+{
+    [[self parentStreamWriter] writeInputStream:aStream completion:completion];
+}
+
+- (void)groupWrites:(void (^)(PSYStreamWriter *))writes completion:(void (^)(void))completion
+{
+    [[self parentStreamWriter] groupWrites:writes completion:completion];
+}
+
+- (void)writeBytes:(const uint8_t *)buffer ofLength:(NSUInteger)length;
+{
+    [[self parentStreamWriter] writeBytes:buffer ofLength:length];
+}
+
+// Returns YES if we can continue to read more data
+- (BOOL)PSY_readDataBuffer;
+{
+    if(![inputStream hasBytesAvailable]) return NO;
+    
+#define BUFFER_SIZE 1024
+    uint8_t buffer[BUFFER_SIZE] = { 0 };
+    
+    NSUInteger read = [inputStream read:buffer maxLength:BUFFER_SIZE];
+    
+    [dataHelper writeBytes:buffer ofLength:read];
+    
+    return read == BUFFER_SIZE;
+}
+
+- (BOOL)writeDataToStream:(NSOutputStream *)aStream;
+{
+    //Write whatever we already accumulated
+    BOOL finished = [dataHelper writeDataToStream:aStream];
+    
+    // The helper couldn't write everything it stored, stop here
+    if(!finished) return NO;
+    
+    BOOL continueReading = YES;
+    
+    while(continueReading)
+    {
+        switch([inputStream streamStatus])
+        {
+            case NSStreamStatusNotOpen : [inputStream open]; break;
+            case NSStreamStatusOpening : return NO;
+            case NSStreamStatusOpen :
+                // We don't have to read anything but we're not at the end of the stream
+                // so there are still some data to read, return NO so we stay in the queue
+                if(![inputStream hasBytesAvailable]) return NO;
+                break;
+            case NSStreamStatusReading :
+            case NSStreamStatusWriting :
+                // Do nothing
+                break;
+            case NSStreamStatusAtEnd :
+            case NSStreamStatusClosed :
+                // The stream is closed or finished, there's no more data to read at all
+                if(![inputStream hasBytesAvailable])
+                {
+                    if(completionBlock != nil) completionBlock();
+                    return YES;
+                }
+                
+                break;
+            case NSStreamStatusError :
+                break;
+            default :
+                // Gné?!
+                break;
+        }
+        
+        // Read more data from the buffer
+        [self PSY_readDataBuffer];
+        
+        // Attempt to write the data, if return NO we're done for now
+        continueReading = [dataHelper writeDataToStream:aStream];
+    }
+    
+    return NO;
+}
+
+- (void)stream:(NSStream *)aStream handleEvent:(NSStreamEvent)eventCode
+{
+    // Read as much data as we can from the stream
+    // It's either going to accumulate in the stream or in our own buffer
+    // we're better off getting everything ourselves
+    if(eventCode & NSStreamEventHasBytesAvailable)
+        while([self PSY_readDataBuffer]);
+    
+    if(eventCode & NSStreamEventErrorOccurred &&
+       [[self delegate] respondsToSelector:@selector(streamWriterDidEncounterEnd:)])
+        [[self delegate] streamWriterDidEncounterEnd:self];
 }
 
 @end
