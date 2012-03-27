@@ -1,10 +1,27 @@
-//
-//  PSYStreamScanner.h
-//  PSYDataAdditions
-//
-//  Created by Remy Demarest on 13/03/2012.
-//  Copyright (c) 2012 NuLayer Inc. All rights reserved.
-//
+/*
+ PSYStreamScanner.h
+ Created by Remy "Psy" Demarest on 13/03/2012.
+ 
+ Copyright (c) 2012. Remy "Psy" Demarest
+
+ Permission is hereby granted, free of charge, to any person obtaining a copy
+ of this software and associated documentation files (the "Software"), to deal
+ in the Software without restriction, including without limitation the rights
+ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ copies of the Software, and to permit persons to whom the Software is
+ furnished to do so, subject to the following conditions:
+
+ The above copyright notice and this permission notice shall be included in
+ all copies or substantial portions of the Software.
+
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ THE SOFTWARE.
+ */
 
 #import <Foundation/Foundation.h>
 
@@ -20,7 +37,7 @@
 
 // Message used to scan the data when no expectations have been provided
 // If nil and if no expectations are available, all the data received by the scanner are ignored
-@property(nonatomic, copy) PSYStreamScannerMessage *defaultMessage;
+@property(nonatomic, copy) NSArray *defaultMessages;
 
 - (PSYStreamScannerMessage *)messageForIdentifier:(NSString *)identifier;
 - (void)setMessage:(PSYStreamScannerMessage *)aMessage forIdentifier:(NSString *)identifier;
@@ -34,17 +51,10 @@
 // You need to call this method again if you expect the messages again
 - (void)expectMessagesWithIdentifiers:(NSArray *)identifiers;
 
-- (void)cancelExpectations;
+- (void)expectMessage:(PSYStreamScannerMessage *)message;
+- (void)expectMessagesInArray:(NSArray *)messages;
 
-// Queue-based alternatives
-- (void)tailAppendExpectedMessageWithIdentifier:(NSString *)identifier;
-- (void)tailAppendExpectedMessagesWithIdentifiers:(NSArray *)identifiers;
-
-- (void)headInsertExpectedMessageWithIdentifier:(NSString *)identifier;
-- (void)headInsertExpectedMessagesWithIdentifiers:(NSArray *)identifiers;
-
-- (void)removeExpectedMessagesWithIdentifiers:(NSArray *)identifiers;
-- (void)removeAllExpectations;
+- (void)removeExpectations;
 
 @end
 
