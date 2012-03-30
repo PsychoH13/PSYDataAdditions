@@ -130,7 +130,7 @@
     RELEASE(data);                                                       \
 }
 #define SIMPLE_WRITE_METHOD(name, type) WRITE_METHOD(name, type, sizeof(type))
-#define VAR_WRITE_METHOD(name, type)   WRITE_METHOD(name, type, sizeof(type) + 1)
+#define VAR_WRITE_METHOD(name, type)    WRITE_METHOD(name, type, sizeof(type) + 1)
 
 SIMPLE_WRITE_METHOD(Int8, uint8_t)
 

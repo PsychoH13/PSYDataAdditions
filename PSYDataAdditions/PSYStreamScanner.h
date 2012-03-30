@@ -29,12 +29,6 @@
 
 @interface PSYStreamScanner : NSObject
 
-+ (id)scannerWithInputStream:(NSInputStream *)aStream;
-- (id)initWithInputStream:(NSInputStream *)aStream;
-
-+ (id)scannerWithInputStream:(NSInputStream *)aStream closeOnDealloc:(BOOL)closeOnDealloc;
-- (id)initWithInputStream:(NSInputStream *)aStream closeOnDealloc:(BOOL)closeOnDealloc;
-
 // Message used to scan the data when no expectations have been provided
 // If nil and if no expectations are available, all the data received by the scanner are ignored
 @property(nonatomic, copy) NSArray *defaultMessages;
@@ -55,6 +49,16 @@
 - (void)expectMessagesInArray:(NSArray *)messages;
 
 - (void)removeExpectations;
+
+@end
+
+@interface PSYStreamScanner (PSYStreamScannerCreation)
+
++ (id)scannerWithInputStream:(NSInputStream *)aStream;
+- (id)initWithInputStream:(NSInputStream *)aStream;
+
++ (id)scannerWithInputStream:(NSInputStream *)aStream closeOnDealloc:(BOOL)closeOnDealloc;
+- (id)initWithInputStream:(NSInputStream *)aStream closeOnDealloc:(BOOL)closeOnDealloc;
 
 @end
 
