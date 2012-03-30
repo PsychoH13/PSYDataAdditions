@@ -214,10 +214,9 @@ static BOOL PSYLocationInRange(PSYRange range, unsigned long long loc)
 
 - (BOOL)scanData:(NSData *)data intoData:(NSData **)value
 {
-    PSYRange           cacheRange   = _cacheRange;
-    unsigned long long cacheScanLoc = _cacheScanLocation;
-    unsigned long long length       = [data length];
-    unsigned long long loc          = cacheRange.location + cacheScanLoc;
+    PSYRange           cacheRange = _cacheRange;
+    unsigned long long length     = [data length];
+    unsigned long long loc        = cacheRange.location + _cacheScanLocation;
     if(length == 0 || loc + length > _fileLength) return NO;
     
     const unsigned char *dataBuffer   = [data bytes];
@@ -242,7 +241,6 @@ static BOOL PSYLocationInRange(PSYRange range, unsigned long long loc)
             
             cacheRange.length   = [cacheData length];
             cacheRange.location = [_fileHandle offsetInFile] - cacheRange.length;
-            cacheScanLoc        = 0;
         }
         
         if(cacheBuffer[scannedLoc - cacheRange.location] == dataBuffer[dataLoc])
@@ -275,7 +273,7 @@ static BOOL PSYLocationInRange(PSYRange range, unsigned long long loc)
     unsigned long long length = [stopData length];
     unsigned long long loc    = [_fileHandle offsetInFile];
     
-    if(length == 0 || loc + length > _fileLength)
+    if(length == 0 || (!(options & PSYDataScannerRequireStopData) && loc + length > _fileLength))
     {
         if(value != NULL)
         {
@@ -286,6 +284,7 @@ static BOOL PSYLocationInRange(PSYRange range, unsigned long long loc)
         [self setScanLocation:_fileLength];
         return YES;
     }
+    else if((options & PSYDataScannerRequireStopData) && loc + length > _fileLength) return NO;
     
     NSData              *cacheData    = [_cacheData copy];
     const unsigned char *cacheBuffer  = [cacheData bytes];
@@ -294,10 +293,8 @@ static BOOL PSYLocationInRange(PSYRange range, unsigned long long loc)
     
     const unsigned char *stopBuffer   = [stopData bytes];
     NSMutableData       *retBuffer    = value != NULL ? [[NSMutableData alloc] init] : nil;
-    unsigned long long   stopFoundLoc = loc;
+    PSYRange             dataLocation = PSYRangeMake(loc, 0);
     unsigned long long   stopLoc      = 0;
-    
-    BOOL hasFoundData = NO;
     
     for(unsigned long long scannedLoc = loc; scannedLoc + (length - stopLoc) <= _fileLength; scannedLoc++)
     {
@@ -326,28 +323,28 @@ static BOOL PSYLocationInRange(PSYRange range, unsigned long long loc)
             stopLoc++;
         else
         {
-            stopFoundLoc = scannedLoc + 1;
-            stopLoc      = 0;
+            dataLocation.location = scannedLoc + 1;
+            stopLoc = 0;
         }
         
         // If the stop location is equal to the length of the stopData
         // it means we fully matched the data, break out of the loop
         if(stopLoc >= length)
         {
-            hasFoundData = YES;
+            dataLocation.length = length;
             break;
         }
     }
     
-    if(hasFoundData)
+    if(dataLocation.length == length)
     {
         // The beginning of the stop data is in the data we already bufferized
-        if(stopFoundLoc < cacheRange.location)
+        if(dataLocation.location < cacheRange.location)
         {
             if(value != NULL)
             {
                 // We need to truncate the bufferized data before sending it back to the caller
-                unsigned long long trashedLength = cacheRange.location - stopFoundLoc;
+                unsigned long long trashedLength = cacheRange.location - dataLocation.location;
                 [retBuffer replaceBytesInRange:NSMakeRange([retBuffer length] - trashedLength, trashedLength) withBytes:NULL length:0];
                 *value = AUTORELEASE(retBuffer);
             }
@@ -357,16 +354,21 @@ static BOOL PSYLocationInRange(PSYRange range, unsigned long long loc)
         {
             if(value != NULL)
             {
-                [retBuffer appendBytes:cacheBuffer length:stopFoundLoc - cacheRange.location];
+                [retBuffer appendBytes:cacheBuffer length:dataLocation.location - cacheRange.location];
                 *value = AUTORELEASE(retBuffer);
             }
             
             [_cacheData setData:cacheData];
-            _cacheRange        = cacheRange;
-            _cacheScanLocation = stopFoundLoc - cacheRange.location;
+            _cacheRange = cacheRange;
         }
         
-        [self setScanLocation:stopFoundLoc];
+        [self setScanLocation:(options & PSYDataScannerMoveAfterStopData ? PSYRangeMax(dataLocation) : dataLocation.location)];
+    }
+    else if(options & PSYDataScannerRequireStopData)
+    {
+        RELEASE(cacheData);
+        RELEASE(retBuffer);
+        return NO;
     }
     else if(value != NULL)
     {

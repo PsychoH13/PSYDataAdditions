@@ -25,6 +25,7 @@
 
 #import "NSMutableData+PSYDataWriter.h"
 #import "PSYDataScanner.h"
+#import "PSYUtilities.h"
 
 @implementation NSMutableData (PSYDataWriter)
 
@@ -230,6 +231,7 @@ REPLACE_METHOD(Big, 64)
     [data replaceBytesInRange:NSMakeRange(0, 0) withData:[value dataUsingEncoding:encoding]];
     
     [self replaceBytesInRange:range withData:data];
+    RELEASE(data);
 }
 
 @end
