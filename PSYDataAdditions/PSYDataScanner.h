@@ -32,6 +32,12 @@ typedef enum _PSYDataScannerLocation
     PSYDataScannerLocationEnd,
 } PSYDataScannerLocation;
 
+typedef enum _PSYDataScannerOptions
+{
+    PSYDataScannerRequireStopData   = 0x1,
+    PSYDataScannerMoveAfterStopData = 0x2
+} PSYDataScannerOptions;
+
 @interface PSYDataScanner : NSObject
 
 + (id)scannerWithData:(NSData *)dataToScan;
@@ -98,8 +104,10 @@ typedef enum _PSYDataScannerLocation
 - (BOOL)scanData:(NSData **)data ofLength:(unsigned long long)length;
 - (BOOL)scanData:(NSData *)data intoData:(NSData **)dataValue;
 - (BOOL)scanUpToData:(NSData *)stopData intoData:(NSData **)dataValue;
+- (BOOL)scanUpToData:(NSData *)stopData intoData:(NSData **)dataValue options:(PSYDataScannerOptions)options;
 - (BOOL)scanString:(NSString **)value ofLength:(unsigned long long)length usingEncoding:(NSStringEncoding)encoding;
 - (BOOL)scanUpToString:(NSString *)stopString intoString:(NSString **)value usingEncoding:(NSStringEncoding)encoding;
+- (BOOL)scanUpToString:(NSString *)stopString intoString:(NSString **)value usingEncoding:(NSStringEncoding)encoding options:(PSYDataScannerOptions)options;
 - (BOOL)scanNullTerminatedString:(NSString **)value withEncoding:(NSStringEncoding)encoding;
 
 @end

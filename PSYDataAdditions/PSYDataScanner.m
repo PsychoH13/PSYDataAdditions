@@ -535,6 +535,11 @@
 
 - (BOOL)scanUpToData:(NSData *)stopData intoData:(NSData **)dataValue
 {
+    return [self scanUpToData:stopData intoData:dataValue options:0];
+}
+
+- (BOOL)scanUpToData:(NSData *)stopData intoData:(NSData **)dataValue options:(PSYDataScannerOptions)options;
+{
     PSYRequestConcreteImplementation([self class], _cmd, [self class] != [PSYDataScanner class]);
     return NO;
 }
@@ -563,10 +568,15 @@
 
 - (BOOL)scanUpToString:(NSString *)stopString intoString:(NSString **)value usingEncoding:(NSStringEncoding)encoding;
 {
+    return [self scanUpToString:stopString intoString:value usingEncoding:encoding options:0];
+}
+
+- (BOOL)scanUpToString:(NSString *)stopString intoString:(NSString **)value usingEncoding:(NSStringEncoding)encoding options:(PSYDataScannerOptions)options;
+{
     NSData *stopData = [stopString dataUsingEncoding:encoding];
     NSData *readData = nil;
     
-    BOOL success = [self scanUpToData:stopData intoData:value != NULL ? &readData : NULL];
+    BOOL success = [self scanUpToData:stopData intoData:value != NULL ? &readData : NULL options:options];
     if(success)
     {
         if(value != NULL) *value = AUTORELEASE([[NSString alloc] initWithData:readData encoding:encoding]);
@@ -574,6 +584,7 @@
     
     return success;
 }
+
 
 - (BOOL)scanNullTerminatedString:(NSString **)value withEncoding:(NSStringEncoding)encoding;
 {

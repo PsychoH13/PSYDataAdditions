@@ -99,44 +99,54 @@
 
 - (BOOL)scanUpToData:(NSData *)stopData intoData:(NSData **)dataValue
 {
+    return [self scanUpToData:stopData intoData:dataValue options:0];
+}
+
+- (BOOL)scanUpToData:(NSData *)stopData intoData:(NSData **)dataValue options:(PSYDataScannerOptions)options;
+{
     unsigned long long length = [stopData length];
     
-    NSRange scannedRange = NSMakeRange(_scanLocation, 0);
+    NSRange dataLocation = NSMakeRange(_scanLocation, 0);
     
     if(length == 0 || _scanLocation + length > _dataLength)
-        scannedRange.length = _dataLength - _scanLocation;
+        dataLocation.location = _dataLength;
     else
     {
         const unsigned char *scannedBuffer = [_scannedData bytes];
         const unsigned char *stopBuffer    = [stopData bytes];
+        unsigned long long   stopLoc       = 0;
         
-        BOOL hasFoundData = NO;
-        
-        for(unsigned long long scannedLoc = _scanLocation; scannedLoc + length <= _dataLength; scannedLoc++)
+        for(unsigned long long scannedLoc = _scanLocation; scannedLoc + (length - stopLoc) <= _dataLength; scannedLoc++)
         {
-            hasFoundData = YES;
-            for(unsigned long long stopLoc = 0; stopLoc < length; stopLoc++)
-                if(scannedBuffer[scannedLoc + stopLoc] != stopBuffer[stopLoc])
-                {
-                    hasFoundData = NO;
-                    break;
-                }
-            
-            if(hasFoundData)
+            // If the current stopBuffer byte is equal to the current scanned byte,
+            // increment the stop location to scan check the next bytes in both buffer
+            // otherwise, reset the stop location so the next scanned byte is compared with the first stop byte
+            if(scannedBuffer[scannedLoc] == stopBuffer[stopLoc])
+                stopLoc++;
+            else
             {
-                scannedRange.length = scannedLoc - _scanLocation;
+                dataLocation.location = scannedLoc + 1;
+                stopLoc = 0;
+            }
+            
+            // If the stop location is equal to the length of the stopData
+            // it means we fully matched the data, break out of the loop
+            if(stopLoc >= length)
+            {
+                dataLocation.length = length;
                 break;
             }
         }
         
-        if(!hasFoundData) scannedRange.length = _dataLength - _scanLocation;
+        if(stopLoc < length) dataLocation.location = _dataLength;
     }
     
-    if(scannedRange.length == 0) return NO;
+    if((options & PSYDataScannerRequireStopData) && dataLocation.length != length) return NO;
+    else if(!(options & PSYDataScannerRequireStopData) && dataLocation.location == _scanLocation) return NO;
     
-    if(dataValue != NULL) *dataValue = [[self data] subdataWithRange:scannedRange];
+    if(dataValue != NULL) *dataValue = [[self data] subdataWithRange:NSMakeRange(_scanLocation, dataLocation.location - _scanLocation)];
     
-    _scanLocation = NSMaxRange(scannedRange);
+    _scanLocation = (options & PSYDataScannerMoveAfterStopData ? NSMaxRange(dataLocation) : dataLocation.location);
     
     return YES;
 }

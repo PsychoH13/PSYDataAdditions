@@ -913,7 +913,7 @@
     NSData         *search  = [NSData dataWithBytes:(uint8_t[2]){ 0x00, 0x33 } length:2];
     NSData         *data    = [NSData dataWithBytes:(uint8_t[2]){ 0x66, 0x33 } length:2];
     PSYDataScanner *scanner = [PSYDataScanner scannerWithData:data];
-    NSData         *read    = 0;
+    NSData         *read    = nil;
     
     STAssertTrueNoThrow([scanner scanUpToData:search intoData:&read], @"The scanning of bytes up to NSData should succeed and not throw an exception");
     
