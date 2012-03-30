@@ -270,7 +270,7 @@ static BOOL PSYLocationInRange(PSYRange range, unsigned long long loc)
     return hasFoundData;
 }
 
-- (BOOL)scanUpToData:(NSData *)stopData intoData:(NSData **)value
+- (BOOL)scanUpToData:(NSData *)stopData intoData:(NSData **)value options:(PSYDataScannerOptions)options
 {
     unsigned long long length = [stopData length];
     unsigned long long loc    = [_fileHandle offsetInFile];
