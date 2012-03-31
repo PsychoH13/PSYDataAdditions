@@ -16,10 +16,39 @@
 		C625C650150D61CD002E9EB3 /* PSYFileHandleScannerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = C625C64F150D61CD002E9EB3 /* PSYFileHandleScannerTests.m */; };
 		C66D5B2514CC5FF6003CC295 /* NSMutableData+PSYDataWriter.h in Headers */ = {isa = PBXBuildFile; fileRef = C66D5B2314CC5FF6003CC295 /* NSMutableData+PSYDataWriter.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		C66D5B2614CC5FF6003CC295 /* NSMutableData+PSYDataWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = C66D5B2414CC5FF6003CC295 /* NSMutableData+PSYDataWriter.m */; };
-		C6768805150F1C6B00518128 /* PSYStreamScanner.h in Headers */ = {isa = PBXBuildFile; fileRef = C6768803150F1C6B00518128 /* PSYStreamScanner.h */; };
+		C6768805150F1C6B00518128 /* PSYStreamScanner.h in Headers */ = {isa = PBXBuildFile; fileRef = C6768803150F1C6B00518128 /* PSYStreamScanner.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		C6768806150F1C6B00518128 /* PSYStreamScanner.m in Sources */ = {isa = PBXBuildFile; fileRef = C6768804150F1C6B00518128 /* PSYStreamScanner.m */; };
-		C676880A150F1C8500518128 /* PSYStreamWriter.h in Headers */ = {isa = PBXBuildFile; fileRef = C6768808150F1C8500518128 /* PSYStreamWriter.h */; };
+		C676880A150F1C8500518128 /* PSYStreamWriter.h in Headers */ = {isa = PBXBuildFile; fileRef = C6768808150F1C8500518128 /* PSYStreamWriter.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		C676880B150F1C8500518128 /* PSYStreamWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = C6768809150F1C8500518128 /* PSYStreamWriter.m */; };
+		C6976BC015275AA100B40A03 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C6976BBF15275AA100B40A03 /* Foundation.framework */; };
+		C6976BCF15275AAD00B40A03 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C6976BBF15275AA100B40A03 /* Foundation.framework */; };
+		C6976BDE15275CE100B40A03 /* PSYDataScanner.h in Headers */ = {isa = PBXBuildFile; fileRef = C6F1F0771469C9150083A029 /* PSYDataScanner.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		C6976BDF15275CE100B40A03 /* NSMutableData+PSYDataWriter.h in Headers */ = {isa = PBXBuildFile; fileRef = C66D5B2314CC5FF6003CC295 /* NSMutableData+PSYDataWriter.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		C6976BE015275CE100B40A03 /* PSYStreamScanner.h in Headers */ = {isa = PBXBuildFile; fileRef = C6768803150F1C6B00518128 /* PSYStreamScanner.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		C6976BE115275CE100B40A03 /* PSYStreamWriter.h in Headers */ = {isa = PBXBuildFile; fileRef = C6768808150F1C8500518128 /* PSYStreamWriter.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		C6976BE215275CF600B40A03 /* PSYDataDataScanner.h in Headers */ = {isa = PBXBuildFile; fileRef = C625C63F150D2DF3002E9EB3 /* PSYDataDataScanner.h */; };
+		C6976BE315275CF600B40A03 /* PSYFileHandleScanner.h in Headers */ = {isa = PBXBuildFile; fileRef = C625C646150D3296002E9EB3 /* PSYFileHandleScanner.h */; };
+		C6976BE415275CF600B40A03 /* PSYStreamFileHandleScanner.h in Headers */ = {isa = PBXBuildFile; fileRef = C625C64A150D3E06002E9EB3 /* PSYStreamFileHandleScanner.h */; };
+		C6976BE515275CF600B40A03 /* PSYConcreteStreamWriter.h in Headers */ = {isa = PBXBuildFile; fileRef = C6DAF012150FC38100108E20 /* PSYConcreteStreamWriter.h */; };
+		C6976BE615275CF600B40A03 /* PSYUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = C6DAF00A150FBFFF00108E20 /* PSYUtilities.h */; };
+		C6976BE815275D5C00B40A03 /* PSYDataScanner.m in Sources */ = {isa = PBXBuildFile; fileRef = C6F1F0781469C9150083A029 /* PSYDataScanner.m */; };
+		C6976BE915275D5C00B40A03 /* PSYDataDataScanner.m in Sources */ = {isa = PBXBuildFile; fileRef = C625C640150D2DF3002E9EB3 /* PSYDataDataScanner.m */; };
+		C6976BEA15275D5C00B40A03 /* PSYFileHandleScanner.m in Sources */ = {isa = PBXBuildFile; fileRef = C625C647150D3296002E9EB3 /* PSYFileHandleScanner.m */; };
+		C6976BEB15275D5C00B40A03 /* PSYStreamFileHandleScanner.m in Sources */ = {isa = PBXBuildFile; fileRef = C625C64B150D3E06002E9EB3 /* PSYStreamFileHandleScanner.m */; };
+		C6976BEC15275D5C00B40A03 /* NSMutableData+PSYDataWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = C66D5B2414CC5FF6003CC295 /* NSMutableData+PSYDataWriter.m */; };
+		C6976BED15275D5C00B40A03 /* PSYStreamScanner.m in Sources */ = {isa = PBXBuildFile; fileRef = C6768804150F1C6B00518128 /* PSYStreamScanner.m */; };
+		C6976BEE15275D5C00B40A03 /* PSYStreamWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = C6768809150F1C8500518128 /* PSYStreamWriter.m */; };
+		C6976BEF15275D5C00B40A03 /* PSYConcreteStreamWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = C6DAF013150FC38100108E20 /* PSYConcreteStreamWriter.m */; };
+		C6976BF015275D5C00B40A03 /* PSYUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = C6DAF00B150FBFFF00108E20 /* PSYUtilities.m */; };
+		C6976BF115275D6B00B40A03 /* PSYDataScanner.m in Sources */ = {isa = PBXBuildFile; fileRef = C6F1F0781469C9150083A029 /* PSYDataScanner.m */; };
+		C6976BF215275D6B00B40A03 /* PSYDataDataScanner.m in Sources */ = {isa = PBXBuildFile; fileRef = C625C640150D2DF3002E9EB3 /* PSYDataDataScanner.m */; };
+		C6976BF315275D6B00B40A03 /* PSYFileHandleScanner.m in Sources */ = {isa = PBXBuildFile; fileRef = C625C647150D3296002E9EB3 /* PSYFileHandleScanner.m */; };
+		C6976BF415275D6B00B40A03 /* PSYStreamFileHandleScanner.m in Sources */ = {isa = PBXBuildFile; fileRef = C625C64B150D3E06002E9EB3 /* PSYStreamFileHandleScanner.m */; };
+		C6976BF515275D6B00B40A03 /* NSMutableData+PSYDataWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = C66D5B2414CC5FF6003CC295 /* NSMutableData+PSYDataWriter.m */; };
+		C6976BF615275D6B00B40A03 /* PSYStreamScanner.m in Sources */ = {isa = PBXBuildFile; fileRef = C6768804150F1C6B00518128 /* PSYStreamScanner.m */; };
+		C6976BF715275D6B00B40A03 /* PSYStreamWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = C6768809150F1C8500518128 /* PSYStreamWriter.m */; };
+		C6976BF815275D6B00B40A03 /* PSYConcreteStreamWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = C6DAF013150FC38100108E20 /* PSYConcreteStreamWriter.m */; };
+		C6976BF915275D6B00B40A03 /* PSYUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = C6DAF00B150FBFFF00108E20 /* PSYUtilities.m */; };
 		C6DAF00C150FBFFF00108E20 /* PSYUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = C6DAF00A150FBFFF00108E20 /* PSYUtilities.h */; };
 		C6DAF00D150FBFFF00108E20 /* PSYUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = C6DAF00B150FBFFF00108E20 /* PSYUtilities.m */; };
 		C6DAF014150FC38100108E20 /* PSYConcreteStreamWriter.h in Headers */ = {isa = PBXBuildFile; fileRef = C6DAF012150FC38100108E20 /* PSYConcreteStreamWriter.h */; };
@@ -36,6 +65,20 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		C6976BD915275C7C00B40A03 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C6F1F03D1469C8F50083A029 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C6976BCD15275AAD00B40A03;
+			remoteInfo = "PSYDataAdditions-iOS-Device";
+		};
+		C6976BDB15275C7F00B40A03 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C6F1F03D1469C8F50083A029 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C6976BBD15275AA100B40A03;
+			remoteInfo = "PSYDataAdditions-iOS-Simulator";
+		};
 		C6F1F0631469C8F50083A029 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = C6F1F03D1469C8F50083A029 /* Project object */;
@@ -60,6 +103,10 @@
 		C6768804150F1C6B00518128 /* PSYStreamScanner.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PSYStreamScanner.m; sourceTree = "<group>"; };
 		C6768808150F1C8500518128 /* PSYStreamWriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PSYStreamWriter.h; sourceTree = "<group>"; };
 		C6768809150F1C8500518128 /* PSYStreamWriter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PSYStreamWriter.m; sourceTree = "<group>"; };
+		C6976BAA15275A8600B40A03 /* PSYDataAdditions.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PSYDataAdditions.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		C6976BBE15275AA100B40A03 /* libPSYDataAdditions-iphonesimulator.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPSYDataAdditions-iphonesimulator.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		C6976BBF15275AA100B40A03 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		C6976BCE15275AAD00B40A03 /* libPSYDataAdditions-iphoneos.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPSYDataAdditions-iphoneos.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		C6DAF00A150FBFFF00108E20 /* PSYUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PSYUtilities.h; sourceTree = "<group>"; };
 		C6DAF00B150FBFFF00108E20 /* PSYUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PSYUtilities.m; sourceTree = "<group>"; };
 		C6DAF012150FC38100108E20 /* PSYConcreteStreamWriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PSYConcreteStreamWriter.h; sourceTree = "<group>"; };
@@ -83,6 +130,22 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		C6976BBB15275AA100B40A03 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C6976BC015275AA100B40A03 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C6976BCB15275AAD00B40A03 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C6976BCF15275AAD00B40A03 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		C6F1F0431469C8F50083A029 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -165,6 +228,9 @@
 			children = (
 				C6F1F0471469C8F50083A029 /* PSYDataAdditions.framework */,
 				C6F1F05F1469C8F50083A029 /* PSYDataAdditionsTests.octest */,
+				C6976BAA15275A8600B40A03 /* PSYDataAdditions.framework */,
+				C6976BBE15275AA100B40A03 /* libPSYDataAdditions-iphonesimulator.a */,
+				C6976BCE15275AAD00B40A03 /* libPSYDataAdditions-iphoneos.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -174,6 +240,7 @@
 			children = (
 				C6F1F04A1469C8F50083A029 /* Cocoa.framework */,
 				C6F1F0601469C8F50083A029 /* SenTestingKit.framework */,
+				C6976BBF15275AA100B40A03 /* Foundation.framework */,
 				C6F1F04C1469C8F50083A029 /* Other Frameworks */,
 			);
 			name = Frameworks;
@@ -235,17 +302,47 @@
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
+		C6976BA715275A8600B40A03 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C6976BDE15275CE100B40A03 /* PSYDataScanner.h in Headers */,
+				C6976BDF15275CE100B40A03 /* NSMutableData+PSYDataWriter.h in Headers */,
+				C6976BE015275CE100B40A03 /* PSYStreamScanner.h in Headers */,
+				C6976BE115275CE100B40A03 /* PSYStreamWriter.h in Headers */,
+				C6976BE215275CF600B40A03 /* PSYDataDataScanner.h in Headers */,
+				C6976BE315275CF600B40A03 /* PSYFileHandleScanner.h in Headers */,
+				C6976BE415275CF600B40A03 /* PSYStreamFileHandleScanner.h in Headers */,
+				C6976BE515275CF600B40A03 /* PSYConcreteStreamWriter.h in Headers */,
+				C6976BE615275CF600B40A03 /* PSYUtilities.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C6976BBC15275AA100B40A03 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C6976BCC15275AAD00B40A03 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		C6F1F0441469C8F50083A029 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				C6F1F0791469C9150083A029 /* PSYDataScanner.h in Headers */,
 				C66D5B2514CC5FF6003CC295 /* NSMutableData+PSYDataWriter.h in Headers */,
+				C6768805150F1C6B00518128 /* PSYStreamScanner.h in Headers */,
+				C676880A150F1C8500518128 /* PSYStreamWriter.h in Headers */,
 				C625C641150D2DF3002E9EB3 /* PSYDataDataScanner.h in Headers */,
 				C625C648150D3296002E9EB3 /* PSYFileHandleScanner.h in Headers */,
 				C625C64C150D3E06002E9EB3 /* PSYStreamFileHandleScanner.h in Headers */,
-				C6768805150F1C6B00518128 /* PSYStreamScanner.h in Headers */,
-				C676880A150F1C8500518128 /* PSYStreamWriter.h in Headers */,
 				C6DAF00C150FBFFF00108E20 /* PSYUtilities.h in Headers */,
 				C6DAF014150FC38100108E20 /* PSYConcreteStreamWriter.h in Headers */,
 			);
@@ -254,6 +351,58 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		C6976BA915275A8600B40A03 /* PSYDataAdditions-iOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C6976BB815275A8600B40A03 /* Build configuration list for PBXNativeTarget "PSYDataAdditions-iOS" */;
+			buildPhases = (
+				C6976BA715275A8600B40A03 /* Headers */,
+				C6976BE715275D1200B40A03 /* Lipo Binary */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				C6976BDC15275C7F00B40A03 /* PBXTargetDependency */,
+				C6976BDA15275C7C00B40A03 /* PBXTargetDependency */,
+			);
+			name = "PSYDataAdditions-iOS";
+			productName = "PSYDataAdditions-iOS";
+			productReference = C6976BAA15275A8600B40A03 /* PSYDataAdditions.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		C6976BBD15275AA100B40A03 /* PSYDataAdditions-iOS-Simulator */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C6976BC715275AA100B40A03 /* Build configuration list for PBXNativeTarget "PSYDataAdditions-iOS-Simulator" */;
+			buildPhases = (
+				C6976BBA15275AA100B40A03 /* Sources */,
+				C6976BBB15275AA100B40A03 /* Frameworks */,
+				C6976BBC15275AA100B40A03 /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "PSYDataAdditions-iOS-Simulator";
+			productName = "PSYDataAdditions-iOS-Simulator";
+			productReference = C6976BBE15275AA100B40A03 /* libPSYDataAdditions-iphonesimulator.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+		C6976BCD15275AAD00B40A03 /* PSYDataAdditions-iOS-Device */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C6976BD615275AAD00B40A03 /* Build configuration list for PBXNativeTarget "PSYDataAdditions-iOS-Device" */;
+			buildPhases = (
+				C6976BCA15275AAD00B40A03 /* Sources */,
+				C6976BCB15275AAD00B40A03 /* Frameworks */,
+				C6976BCC15275AAD00B40A03 /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "PSYDataAdditions-iOS-Device";
+			productName = "PSYDataAdditions-iOS-Device";
+			productReference = C6976BCE15275AAD00B40A03 /* libPSYDataAdditions-iphoneos.a */;
+			productType = "com.apple.product-type.library.static";
+		};
 		C6F1F0461469C8F50083A029 /* PSYDataAdditions */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = C6F1F0711469C8F50083A029 /* Build configuration list for PBXNativeTarget "PSYDataAdditions" */;
@@ -314,6 +463,9 @@
 			targets = (
 				C6F1F0461469C8F50083A029 /* PSYDataAdditions */,
 				C6F1F05E1469C8F50083A029 /* PSYDataAdditionsTests */,
+				C6976BA915275A8600B40A03 /* PSYDataAdditions-iOS */,
+				C6976BCD15275AAD00B40A03 /* PSYDataAdditions-iOS-Device */,
+				C6976BBD15275AA100B40A03 /* PSYDataAdditions-iOS-Simulator */,
 			);
 		};
 /* End PBXProject section */
@@ -338,6 +490,20 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		C6976BE715275D1200B40A03 /* Lipo Binary */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Lipo Binary";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "FRAMEWORK=\"${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.framework\"\n\nlipo \\\n\"${BUILD_DIR}/${CONFIGURATION}-iphoneos/lib${PRODUCT_NAME}-iphoneos.a\" \\\n\"${BUILD_DIR}/${CONFIGURATION}-iphonesimulator/lib${PRODUCT_NAME}-iphonesimulator.a\" \\\n-create -output \"${FRAMEWORK}/Versions/Current/${PRODUCT_NAME}\"\n\n# Strip debugging symbols\n#strip -S \"${FRAMEWORK}/Versions/Current/${PRODUCT_NAME}\"\n\nrm \"${FRAMEWORK}/Resources\"\n\ncd \"${FRAMEWORK}\" && ln -sf \"Versions/Current/${PRODUCT_NAME}\" ./";
+		};
 		C6F1F05D1469C8F50083A029 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -354,6 +520,38 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		C6976BBA15275AA100B40A03 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C6976BF115275D6B00B40A03 /* PSYDataScanner.m in Sources */,
+				C6976BF215275D6B00B40A03 /* PSYDataDataScanner.m in Sources */,
+				C6976BF315275D6B00B40A03 /* PSYFileHandleScanner.m in Sources */,
+				C6976BF415275D6B00B40A03 /* PSYStreamFileHandleScanner.m in Sources */,
+				C6976BF515275D6B00B40A03 /* NSMutableData+PSYDataWriter.m in Sources */,
+				C6976BF615275D6B00B40A03 /* PSYStreamScanner.m in Sources */,
+				C6976BF715275D6B00B40A03 /* PSYStreamWriter.m in Sources */,
+				C6976BF815275D6B00B40A03 /* PSYConcreteStreamWriter.m in Sources */,
+				C6976BF915275D6B00B40A03 /* PSYUtilities.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C6976BCA15275AAD00B40A03 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C6976BE815275D5C00B40A03 /* PSYDataScanner.m in Sources */,
+				C6976BE915275D5C00B40A03 /* PSYDataDataScanner.m in Sources */,
+				C6976BEA15275D5C00B40A03 /* PSYFileHandleScanner.m in Sources */,
+				C6976BEB15275D5C00B40A03 /* PSYStreamFileHandleScanner.m in Sources */,
+				C6976BEC15275D5C00B40A03 /* NSMutableData+PSYDataWriter.m in Sources */,
+				C6976BED15275D5C00B40A03 /* PSYStreamScanner.m in Sources */,
+				C6976BEE15275D5C00B40A03 /* PSYStreamWriter.m in Sources */,
+				C6976BEF15275D5C00B40A03 /* PSYConcreteStreamWriter.m in Sources */,
+				C6976BF015275D5C00B40A03 /* PSYUtilities.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		C6F1F0421469C8F50083A029 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -382,6 +580,16 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		C6976BDA15275C7C00B40A03 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C6976BCD15275AAD00B40A03 /* PSYDataAdditions-iOS-Device */;
+			targetProxy = C6976BD915275C7C00B40A03 /* PBXContainerItemProxy */;
+		};
+		C6976BDC15275C7F00B40A03 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C6976BBD15275AA100B40A03 /* PSYDataAdditions-iOS-Simulator */;
+			targetProxy = C6976BDB15275C7F00B40A03 /* PBXContainerItemProxy */;
+		};
 		C6F1F0641469C8F50083A029 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = C6F1F0461469C8F50083A029 /* PSYDataAdditions */;
@@ -409,12 +617,109 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		C6976BB615275A8600B40A03 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_VERSION = A;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				PRODUCT_NAME = PSYDataAdditions;
+				WRAPPER_EXTENSION = framework;
+			};
+			name = Debug;
+		};
+		C6976BB715275A8600B40A03 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_VERSION = A;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				PRODUCT_NAME = PSYDataAdditions;
+				WRAPPER_EXTENSION = framework;
+			};
+			name = Release;
+		};
+		C6976BC815275AA100B40A03 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				DSTROOT = /tmp/PSYDataAdditions_iOS_Simulator.dst;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "PSYDataAdditions-iphonesimulator";
+				SDKROOT = iphonesimulator;
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		C6976BC915275AA100B40A03 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				DSTROOT = /tmp/PSYDataAdditions_iOS_Simulator.dst;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "PSYDataAdditions-iphonesimulator";
+				SDKROOT = iphonesimulator;
+				SKIP_INSTALL = YES;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		C6976BD715275AAD00B40A03 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = (
+					armv7,
+					armv6,
+				);
+				DSTROOT = /tmp/PSYDataAdditions_iOS_Device.dst;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "PSYDataAdditions-iphoneos";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		C6976BD815275AAD00B40A03 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = (
+					armv7,
+					armv6,
+				);
+				DSTROOT = /tmp/PSYDataAdditions_iOS_Device.dst;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "PSYDataAdditions-iphoneos";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
 		C6F1F06F1469C8F50083A029 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 0.2;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
@@ -432,6 +737,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
+				VALID_ARCHS = "i386 armv6 armv7 x86_64";
 			};
 			name = Debug;
 		};
@@ -441,6 +747,7 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				COPY_PHASE_STRIP = YES;
+				CURRENT_PROJECT_VERSION = 0.2;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
@@ -451,6 +758,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				SDKROOT = macosx;
+				VALID_ARCHS = "i386 armv6 armv7 x86_64";
 			};
 			name = Release;
 		};
@@ -509,6 +817,30 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		C6976BB815275A8600B40A03 /* Build configuration list for PBXNativeTarget "PSYDataAdditions-iOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C6976BB615275A8600B40A03 /* Debug */,
+				C6976BB715275A8600B40A03 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		C6976BC715275AA100B40A03 /* Build configuration list for PBXNativeTarget "PSYDataAdditions-iOS-Simulator" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C6976BC815275AA100B40A03 /* Debug */,
+				C6976BC915275AA100B40A03 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		C6976BD615275AAD00B40A03 /* Build configuration list for PBXNativeTarget "PSYDataAdditions-iOS-Device" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C6976BD715275AAD00B40A03 /* Debug */,
+				C6976BD815275AAD00B40A03 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
 		C6F1F0401469C8F50083A029 /* Build configuration list for PBXProject "PSYDataAdditions" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
