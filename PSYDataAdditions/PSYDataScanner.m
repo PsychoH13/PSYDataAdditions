@@ -24,9 +24,6 @@
  */
 
 #import "PSYDataScanner.h"
-#import "PSYDataDataScanner.h"
-#import "PSYFileHandleScanner.h"
-#import "PSYStreamFileHandleScanner.h"
 #import "PSYUtilities.h"
 
 @interface PSYPlaceholderDataScanner : PSYDataScanner
@@ -614,7 +611,7 @@
 
 - (id)initWithData:(NSData *)dataToScan
 {
-    return (id)[[PSYDataDataScanner alloc] initWithData:dataToScan];
+    return (id)[[NSClassFromString(@"PSYDataDataScanner") alloc] initWithData:dataToScan];
 }
 
 - (id)initWithFileHandle:(NSFileHandle *)fileToScan
@@ -625,10 +622,10 @@
     }
     @catch(NSException *exception)
     {
-        return (id)[[PSYStreamFileHandleScanner alloc] initWithFileHandle:fileToScan];
+        return (id)[[NSClassFromString(@"PSYStreamFileHandleScanner") alloc] initWithFileHandle:fileToScan];
     }
     
-    return (id)[[PSYFileHandleScanner alloc] initWithFileHandle:fileToScan];
+    return (id)[[NSClassFromString(@"PSYFileHandleScanner") alloc] initWithFileHandle:fileToScan];
 }
 
 @end
