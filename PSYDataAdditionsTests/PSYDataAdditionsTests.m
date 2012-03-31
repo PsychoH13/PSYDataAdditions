@@ -59,36 +59,18 @@
     STAssertTrue([scanner isAtEnd], @"When the data is empty, the scanner is at end from the beginning.");
 }
 
-- (void)testNonEmptyData
+- (void)testSetScanLocation
 {
     PSYDataScanner *scanner = [PSYDataScanner scannerWithData:[NSMutableData dataWithLength:10]];
     
     STAssertEquals([scanner scanLocation], (unsigned long long)0, @"The scan location of the scanner should start at zero.");
-    
     STAssertFalse([scanner isAtEnd], @"When the data is not empty, the scanner should not be at end.");
-}
-
-- (void)testSetScanLocationInBounds
-{
-    PSYDataScanner *scanner = [PSYDataScanner scannerWithData:[NSMutableData dataWithLength:10]];
     
     STAssertNoThrow([scanner setScanLocation:5], @"Setting a scan location in the data bounds should not throw an exception.");
-    
     STAssertFalse([scanner isAtEnd], @"When the data is not empty, the scanner should not be at end.");
-}
-
-- (void)testSetScanLocationEndOfBounds
-{
-    PSYDataScanner *scanner = [PSYDataScanner scannerWithData:[NSMutableData dataWithLength:10]];
     
     STAssertNoThrow([scanner setScanLocation:10], @"Setting a scan location of the length of the data should not throw an exception.");
-    
     STAssertTrue([scanner isAtEnd], @"When the scan location is set to the length of the data, the scanner is considered at the end.");
-}
-
-- (void)testScanLocationOutOfBounds
-{
-    PSYDataScanner *scanner = [PSYDataScanner scannerWithData:[NSMutableData dataWithLength:10]];
     
     STAssertThrowsSpecificNamed([scanner setScanLocation:11], NSException, NSRangeException, @"When the scan location is set beyond the length of the data, an NSRangeException exception is thrown.");
 }
@@ -114,331 +96,176 @@
     STAssertEquals([scanner scanLocation], [data length], @"The scan location should have been set to the length of the scanned data.");
 }
 
-- (void)testScanLocationPositiveRelativeTo
+- (void)testScanLocationRelativeTo
 {
     NSData *data = [NSMutableData dataWithLength:10];
     
     PSYDataScanner *scanner = [PSYDataScanner scannerWithData:data];
     
+    // Set positive value
     [scanner setScanLocation:5];
-    
     STAssertTrueNoThrow([scanner setScanLocation:1 relativeTo:PSYDataScannerLocationCurrent], @"Setting the location to the current location plus 1 should work and not throw an exception");
-    
     STAssertEquals([scanner scanLocation], (unsigned long long)6, @"The scan location should have been set to current + 1.");
-    
     STAssertTrueNoThrow([scanner setScanLocation:1 relativeTo:PSYDataScannerLocationBegin], @"Setting the location to the beginning plus 1 should work and not throw an exception");
-    
     STAssertEquals([scanner scanLocation], (unsigned long long)1, @"The scan location should have been set to 1.");
-    
     STAssertFalseNoThrow([scanner setScanLocation:1 relativeTo:PSYDataScannerLocationEnd], @"Setting the location to the end should not work and not throw an exception");
-    
     STAssertEquals([scanner scanLocation], (unsigned long long)1, @"The scan location should have remained at the location where it was before.");
-}
-
-- (void)testScanLocationNegativeRelativeTo
-{
-    NSData *data = [NSMutableData dataWithLength:10];
     
-    PSYDataScanner *scanner = [PSYDataScanner scannerWithData:data];
-    
+    // Negative value
     [scanner setScanLocation:5];
-    
     STAssertTrueNoThrow([scanner setScanLocation:-1 relativeTo:PSYDataScannerLocationCurrent], @"Setting the location to the current location minus 1 should work and not throw an exception");
-    
     STAssertEquals([scanner scanLocation], (unsigned long long)4, @"The scan location should have been set to current - 1.");
-    
     STAssertFalseNoThrow([scanner setScanLocation:-1 relativeTo:PSYDataScannerLocationBegin], @"Setting the location to the beginning minus 1 should work and not throw an exception");
-    
     STAssertEquals([scanner scanLocation], (unsigned long long)4, @"The scan location should have remained at the location where it was before.");
-    
     STAssertTrueNoThrow([scanner setScanLocation:-1 relativeTo:PSYDataScannerLocationEnd], @"Setting the location to the end minus 1 should work and not throw an exception");
-    
     STAssertEquals([scanner scanLocation], (unsigned long long)9, @"The scan location should have been set to the length - 1.");
 }
 
-- (void)testScanInt8EmptyData
+- (void)testScanEmptyData
 {
     NSData         *data    = [NSData data];
     PSYDataScanner *scanner = [PSYDataScanner scannerWithData:data];
-    uint8_t         byte    = 0;
+    uint8_t         value8  = 0;
+    uint16_t        value16 = 0;
+    uint32_t        value32 = 0;
+    uint64_t        value64 = 0;
     
-    STAssertFalseNoThrow([scanner scanInt8:&byte], @"The scanning of one byte should fail and not throw an exception");
-    
+    STAssertFalseNoThrow([scanner scanInt8:&value8], @"The scanning of one byte should fail and not throw an exception");
     STAssertEquals([scanner scanLocation], (unsigned long long)0, @"The scan location should not have changed.");
+    STAssertEquals(value8, (uint8_t)0, @"The scanned value should have not changed.");
     
-    STAssertEquals(byte, (uint8_t)0, @"The scanned value should have not changed.");
-}
-
-- (void)testScanInt8NonEmptyData
-{
-    uint8_t byte = 0;
-    
-    NSData         *data    = [NSData dataWithBytes:(uint8_t[2]){ 0xDE, 0xAD } length:2];
-    PSYDataScanner *scanner = [PSYDataScanner scannerWithData:data];
-    
-    STAssertTrueNoThrow([scanner scanInt8:&byte], @"The scanning of one byte should succeed and not throw an exception");
-    
-    STAssertEquals([scanner scanLocation], (unsigned long long)1, @"The scan location should have been advanced by 1.");
-    
-    STAssertEquals(byte, (uint8_t)0xDE, @"The scanned value should be equal to the first byte in the data.");
-    
-    byte = 0;
-    
-    STAssertTrueNoThrow([scanner scanInt8:&byte], @"The scanning of one byte should succeed and not throw an exception");
-    
-    STAssertEquals([scanner scanLocation], (unsigned long long)2, @"The scan location should have been advanced by 1.");
-    
-    STAssertEquals(byte, (uint8_t)0xAD, @"The scanned value should be equal to the first byte in the data.");
-}
-
-- (void)testScanLittleEndianInt16EmptyData
-{
-    NSData         *data    = [NSData data];
-    PSYDataScanner *scanner = [PSYDataScanner scannerWithData:data];
-    uint16_t        byte    = 0;
-    
-    STAssertFalseNoThrow([scanner scanLittleEndianInt16:&byte], @"The scanning of little endian uint16_t should fail and not throw an exception");
-    
+    STAssertFalseNoThrow([scanner scanLittleEndianInt16:&value16], @"The scanning of little endian uint16_t should fail and not throw an exception");
     STAssertEquals([scanner scanLocation], (unsigned long long)0, @"The scan location should not have changed.");
+    STAssertEquals(value16, (uint16_t)0, @"The scanned value should have not changed.");
     
-    STAssertEquals(byte, (uint16_t)0, @"The scanned value should have not changed.");
-}
-
-- (void)testScanLittleEndianInt16SmallData
-{
-    NSData         *data    = [NSData dataWithBytes:(uint8_t[2]){ 0xDE } length:1];
-    PSYDataScanner *scanner = [PSYDataScanner scannerWithData:data];
-    uint16_t        byte    = 0;
-    
-    STAssertFalseNoThrow([scanner scanLittleEndianInt16:&byte], @"The scanning of little endian uint16_t should fail and not throw an exception");
-    
+    STAssertFalseNoThrow([scanner scanBigEndianInt16:&value16], @"The scanning of big endian uint16_t should fail and not throw an exception");
     STAssertEquals([scanner scanLocation], (unsigned long long)0, @"The scan location should not have changed.");
+    STAssertEquals(value16, (uint16_t)0, @"The scanned value should have not changed.");
     
-    STAssertEquals(byte, (uint16_t)0, @"The scanned value should have not changed.");
-}
-
-- (void)testScanLittleEndianInt16
-{
-    NSData         *data    = [NSData dataWithBytes:(uint8_t[2]){ 0xAD, 0xDE } length:2];
-    PSYDataScanner *scanner = [PSYDataScanner scannerWithData:data];
-    uint16_t        byte    = 0;
-    
-    STAssertTrueNoThrow([scanner scanLittleEndianInt16:&byte], @"The scanning of little endian uint16_t should succeed and not throw an exception");
-    
-    STAssertEquals([scanner scanLocation], (unsigned long long)2, @"The scan location should have been advanced by 2.");
-    
-    STAssertEquals(byte, (uint16_t)0xDEAD, @"The scanned value should be equal to the first 2 bytes in the data.");
-}
-
-- (void)testScanBigEndianInt16EmptyData
-{
-    NSData         *data    = [NSData data];
-    PSYDataScanner *scanner = [PSYDataScanner scannerWithData:data];
-    uint16_t        byte    = 0;
-    
-    STAssertFalseNoThrow([scanner scanBigEndianInt16:&byte], @"The scanning of big endian uint16_t should fail and not throw an exception");
-    
+    STAssertFalseNoThrow([scanner scanLittleEndianInt32:&value32], @"The scanning of little endian uint32_t should fail and not throw an exception");
     STAssertEquals([scanner scanLocation], (unsigned long long)0, @"The scan location should not have changed.");
+    STAssertEquals(value32, (uint32_t)0, @"The scanned value should have not changed.");
     
-    STAssertEquals(byte, (uint16_t)0, @"The scanned value should have not changed.");
-}
-
-- (void)testScanBigEndianInt16SmallData
-{
-    NSData         *data    = [NSData dataWithBytes:(uint8_t[2]){ 0xDE } length:1];
-    PSYDataScanner *scanner = [PSYDataScanner scannerWithData:data];
-    uint16_t        byte    = 0;
-    
-    STAssertFalseNoThrow([scanner scanBigEndianInt16:&byte], @"The scanning of big endian uint16_t should fail and not throw an exception");
-    
+    STAssertFalseNoThrow([scanner scanBigEndianInt32:&value32], @"The scanning of big endian uint32_t should fail and not throw an exception");
     STAssertEquals([scanner scanLocation], (unsigned long long)0, @"The scan location should not have changed.");
+    STAssertEquals(value32, (uint32_t)0, @"The scanned value should have not changed.");
     
-    STAssertEquals(byte, (uint16_t)0, @"The scanned value should have not changed.");
-}
-
-- (void)testScanBigEndianInt16
-{
-    NSData         *data    = [NSData dataWithBytes:(uint8_t[2]){ 0xDE, 0xAD } length:2];
-    PSYDataScanner *scanner = [PSYDataScanner scannerWithData:data];
-    uint16_t        byte    = 0;
-    
-    STAssertTrueNoThrow([scanner scanBigEndianInt16:&byte], @"The scanning of big endian uint16_t should succeed and not throw an exception");
-    
-    STAssertEquals([scanner scanLocation], (unsigned long long)2, @"The scan location should have been advanced by 2.");
-    
-    STAssertEquals(byte, (uint16_t)0xDEAD, @"The scanned value should be equal to the first 2 bytes in the data.");
-}
-
-- (void)testScanLittleEndianInt32EmptyData
-{
-    NSData         *data    = [NSData data];
-    PSYDataScanner *scanner = [PSYDataScanner scannerWithData:data];
-    uint32_t        byte    = 0;
-    
-    STAssertFalseNoThrow([scanner scanLittleEndianInt32:&byte], @"The scanning of little endian uint32_t should fail and not throw an exception");
-    
+    STAssertFalseNoThrow([scanner scanLittleEndianInt64:&value64], @"The scanning of little endian uint64_t should fail and not throw an exception");
     STAssertEquals([scanner scanLocation], (unsigned long long)0, @"The scan location should not have changed.");
+    STAssertEquals(value64, (uint64_t)0, @"The scanned value should have not changed.");
     
-    STAssertEquals(byte, (uint32_t)0, @"The scanned value should have not changed.");
-}
-
-- (void)testScanLittleEndianInt32SmallData
-{
-    NSData         *data    = [NSData dataWithBytes:(uint8_t[3]){ 0xDE, 0xAD, 0xBE } length:3];
-    PSYDataScanner *scanner = [PSYDataScanner scannerWithData:data];
-    uint32_t        byte    = 0;
-    
-    STAssertFalseNoThrow([scanner scanLittleEndianInt32:&byte], @"The scanning of little endian uint32_t should fail and not throw an exception");
-    
+    STAssertFalseNoThrow([scanner scanBigEndianInt64:&value64], @"The scanning of big endian uint64_t should fail and not throw an exception");
     STAssertEquals([scanner scanLocation], (unsigned long long)0, @"The scan location should not have changed.");
-    
-    STAssertEquals(byte, (uint32_t)0, @"The scanned value should have not changed.");
+    STAssertEquals(value64, (uint64_t)0, @"The scanned value should have not changed.");
 }
 
-- (void)testScanLittleEndianInt32
-{
-    NSData         *data    = [NSData dataWithBytes:(uint8_t[4]){ 0xEF, 0xBE, 0xAD, 0xDE } length:4];
-    PSYDataScanner *scanner = [PSYDataScanner scannerWithData:data];
-    uint32_t        byte    = 0;
-    
-    STAssertTrueNoThrow([scanner scanLittleEndianInt32:&byte], @"The scanning of little endian uint32_t should succeed and not throw an exception");
-    
-    STAssertEquals([scanner scanLocation], (unsigned long long)4, @"The scan location should have been advanced by 4.");
-    
-    STAssertEquals(byte, (uint32_t)0xDEADBEEF, @"The scanned value should be equal to the first 4 bytes in the data.");
-}
-
-- (void)testScanBigEndianInt32EmptyData
-{
-    NSData         *data    = [NSData data];
-    PSYDataScanner *scanner = [PSYDataScanner scannerWithData:data];
-    uint32_t        byte    = 0;
-    
-    STAssertFalseNoThrow([scanner scanBigEndianInt32:&byte], @"The scanning of big endian uint32_t should fail and not throw an exception");
-    
-    STAssertEquals([scanner scanLocation], (unsigned long long)0, @"The scan location should not have changed.");
-    
-    STAssertEquals(byte, (uint32_t)0, @"The scanned value should have not changed.");
-}
-
-- (void)testScanBigEndianInt32SmallData
-{
-    NSData         *data    = [NSData dataWithBytes:(uint8_t[3]){ 0xDE, 0xAD, 0xBE } length:3];
-    PSYDataScanner *scanner = [PSYDataScanner scannerWithData:data];
-    uint32_t        byte    = 0;
-    
-    STAssertFalseNoThrow([scanner scanBigEndianInt32:&byte], @"The scanning of big endian uint32_t should fail and not throw an exception");
-    
-    STAssertEquals([scanner scanLocation], (unsigned long long)0, @"The scan location should not have changed.");
-    
-    STAssertEquals(byte, (uint32_t)0, @"The scanned value should have not changed.");
-}
-
-- (void)testScanBigEndianInt32
-{
-    NSData         *data    = [NSData dataWithBytes:(uint8_t[4]){ 0xDE, 0xAD, 0xBE, 0xEF } length:4];
-    PSYDataScanner *scanner = [PSYDataScanner scannerWithData:data];
-    uint32_t        byte    = 0;
-    
-    STAssertTrueNoThrow([scanner scanBigEndianInt32:&byte], @"The scanning of big endian uint32_t should succeed and not throw an exception");
-    
-    STAssertEquals([scanner scanLocation], (unsigned long long)4, @"The scan location should have been advanced by 4.");
-    
-    STAssertEquals(byte, (uint32_t)0xDEADBEEF, @"The scanned value should be equal to the first 4 bytes in the data.");
-}
-
-- (void)testScanLittleEndianInt64EmptyData
-{
-    NSData         *data    = [NSData data];
-    PSYDataScanner *scanner = [PSYDataScanner scannerWithData:data];
-    uint64_t        byte    = 0;
-    
-    STAssertFalseNoThrow([scanner scanLittleEndianInt64:&byte], @"The scanning of little endian uint64_t should fail and not throw an exception");
-    
-    STAssertEquals([scanner scanLocation], (unsigned long long)0, @"The scan location should not have changed.");
-    
-    STAssertEquals(byte, (uint64_t)0, @"The scanned value should have not changed.");
-}
-
-- (void)testScanLittleEndianInt64SmallData
-{
-    NSData         *data    = [NSData dataWithBytes:(uint8_t[7]){ 0xDE, 0xAD, 0xBE, 0xEF, 0x66, 0x99, 0xCC } length:7];
-    PSYDataScanner *scanner = [PSYDataScanner scannerWithData:data];
-    uint64_t        byte    = 0;
-    
-    STAssertFalseNoThrow([scanner scanLittleEndianInt64:&byte], @"The scanning of little endian uint64_t should fail and not throw an exception");
-    
-    STAssertEquals([scanner scanLocation], (unsigned long long)0, @"The scan location should not have changed.");
-    
-    STAssertEquals(byte, (uint64_t)0, @"The scanned value should have not changed.");
-}
-
-- (void)testScanLittleEndianInt64
+- (void)testScanDataLittleEndian
 {
     NSData         *data    = [NSData dataWithBytes:(uint8_t[8]){ 0xFF, 0xCC, 0x99, 0x66, 0xEF, 0xBE, 0xAD, 0xDE } length:8];
     PSYDataScanner *scanner = [PSYDataScanner scannerWithData:data];
-    uint64_t        byte    = 0;
+    uint8_t         value8  = 0;
+    uint16_t        value16 = 0;
+    uint32_t        value32 = 0;
+    uint64_t        value64 = 0;
     
-    STAssertTrueNoThrow([scanner scanLittleEndianInt64:&byte], @"The scanning of little endian uint64_t should succeed and not throw an exception");
+    [scanner setScanLocation:7];
+    STAssertTrueNoThrow([scanner scanInt8:&value8], @"The scanning of one byte should succeed and not throw an exception");
+    STAssertEquals([scanner scanLocation], (unsigned long long)8, @"The scan location should have been advanced by 1.");
+    STAssertEquals(value8, (uint8_t)0xDE, @"The scanned value should be equal to the first byte in the data.");
     
+    [scanner setScanLocation:6];
+    STAssertTrueNoThrow([scanner scanLittleEndianInt16:&value16], @"The scanning of little endian uint16_t should succeed and not throw an exception");
+    STAssertEquals([scanner scanLocation], (unsigned long long)8, @"The scan location should have been advanced by 2.");
+    STAssertEquals(value16, (uint16_t)0xDEAD, @"The scanned value should be equal to the first 2 bytes in the data.");
+    
+    [scanner setScanLocation:4];
+    STAssertTrueNoThrow([scanner scanLittleEndianInt32:&value32], @"The scanning of little endian uint32_t should succeed and not throw an exception");
+    STAssertEquals([scanner scanLocation], (unsigned long long)8, @"The scan location should have been advanced by 4.");
+    STAssertEquals(value32, (uint32_t)0xDEADBEEF, @"The scanned value should be equal to the first 4 bytes in the data.");
+    
+    [scanner setScanLocation:0];
+    STAssertTrueNoThrow([scanner scanLittleEndianInt64:&value64], @"The scanning of little endian uint64_t should succeed and not throw an exception");
     STAssertEquals([scanner scanLocation], (unsigned long long)8, @"The scan location should have been advanced by 8.");
-    
-    STAssertEquals(byte, (uint64_t)0xDEADBEEF6699CCFF, @"The scanned value should be equal to the first 8 bytes in the data.");
+    STAssertEquals(value64, (uint64_t)0xDEADBEEF6699CCFF, @"The scanned value should be equal to the first 8 bytes in the data.");
 }
 
-- (void)testScanBigEndianInt64EmptyData
-{
-    NSData         *data    = [NSData data];
-    PSYDataScanner *scanner = [PSYDataScanner scannerWithData:data];
-    uint64_t        byte    = 0;
-    
-    STAssertFalseNoThrow([scanner scanBigEndianInt64:&byte], @"The scanning of big endian uint64_t should fail and not throw an exception");
-    
-    STAssertEquals([scanner scanLocation], (unsigned long long)0, @"The scan location should not have changed.");
-    
-    STAssertEquals(byte, (uint64_t)0, @"The scanned value should have not changed.");
-}
-
-- (void)testScanBigEndianInt64SmallData
-{
-    NSData         *data    = [NSData dataWithBytes:(uint8_t[7]){ 0xDE, 0xAD, 0xBE, 0xEF, 0x66, 0x99, 0xCC } length:7];
-    PSYDataScanner *scanner = [PSYDataScanner scannerWithData:data];
-    uint64_t        byte    = 0;
-    
-    STAssertFalseNoThrow([scanner scanBigEndianInt64:&byte], @"The scanning of big endian uint64_t should fail and not throw an exception");
-    
-    STAssertEquals([scanner scanLocation], (unsigned long long)0, @"The scan location should not have changed.");
-    
-    STAssertEquals(byte, (uint64_t)0, @"The scanned value should have not changed.");
-}
-
-- (void)testScanBigEndianInt64
+- (void)testScanDataBigEndian
 {
     NSData         *data    = [NSData dataWithBytes:(uint8_t[8]){ 0xDE, 0xAD, 0xBE, 0xEF, 0x66, 0x99, 0xCC, 0xFF } length:8];
     PSYDataScanner *scanner = [PSYDataScanner scannerWithData:data];
-    uint64_t        byte    = 0;
+    uint16_t        value16 = 0;
+    uint32_t        value32 = 0;
+    uint64_t        value64 = 0;
     
-    STAssertTrueNoThrow([scanner scanBigEndianInt64:&byte], @"The scanning of big endian uint64_t should succeed and not throw an exception");
+    [scanner setScanLocation:0];
+    STAssertTrueNoThrow([scanner scanBigEndianInt16:&value16], @"The scanning of little endian uint16_t should succeed and not throw an exception");
+    STAssertEquals([scanner scanLocation], (unsigned long long)2, @"The scan location should have been advanced by 2.");
+    STAssertEquals(value16, (uint16_t)0xDEAD, @"The scanned value should be equal to the first 2 bytes in the data.");
     
+    [scanner setScanLocation:0];
+    STAssertTrueNoThrow([scanner scanBigEndianInt32:&value32], @"The scanning of little endian uint32_t should succeed and not throw an exception");
+    STAssertEquals([scanner scanLocation], (unsigned long long)4, @"The scan location should have been advanced by 4.");
+    STAssertEquals(value32, (uint32_t)0xDEADBEEF, @"The scanned value should be equal to the first 4 bytes in the data.");
+    
+    [scanner setScanLocation:0];
+    STAssertTrueNoThrow([scanner scanBigEndianInt64:&value64], @"The scanning of big endian uint64_t should succeed and not throw an exception");
     STAssertEquals([scanner scanLocation], (unsigned long long)8, @"The scan location should have been advanced by 8.");
+    STAssertEquals(value64, (uint64_t)0xDEADBEEF6699CCFF, @"The scanned value should be equal to the first 8 bytes in the data.");
+}
+
+- (void)testScanSmallData
+{
+    NSData         *data    = [NSData dataWithBytes:(uint8_t[7]){ 0xDE, 0xAD, 0xBE, 0xEF, 0x66, 0x99, 0xCC } length:7];
+    PSYDataScanner *scanner = [PSYDataScanner scannerWithData:data];
+    uint16_t        value16 = 0;
+    uint32_t        value32 = 0;
+    uint64_t        value64 = 0;
     
-    STAssertEquals(byte, (uint64_t)0xDEADBEEF6699CCFF, @"The scanned value should be equal to the first 8 bytes in the data.");
+    [scanner setScanLocation:6];
+    STAssertFalseNoThrow([scanner scanBigEndianInt16:&value16], @"The scanning of big endian uint16_t should fail and not throw an exception");
+    STAssertEquals([scanner scanLocation], (unsigned long long)6, @"The scan location should not have changed.");
+    STAssertEquals(value16, (uint16_t)0, @"The scanned value should have not changed.");
+    
+    [scanner setScanLocation:6];
+    STAssertFalseNoThrow([scanner scanLittleEndianInt16:&value16], @"The scanning of little endian uint16_t should fail and not throw an exception");
+    STAssertEquals([scanner scanLocation], (unsigned long long)6, @"The scan location should not have changed.");
+    STAssertEquals(value16, (uint16_t)0, @"The scanned value should have not changed.");
+    
+    [scanner setScanLocation:4];
+    STAssertFalseNoThrow([scanner scanBigEndianInt32:&value32], @"The scanning of big endian uint32_t should fail and not throw an exception");
+    STAssertEquals([scanner scanLocation], (unsigned long long)4, @"The scan location should not have changed.");
+    STAssertEquals(value32, (uint32_t)0, @"The scanned value should have not changed.");
+    
+    [scanner setScanLocation:4];
+    STAssertFalseNoThrow([scanner scanLittleEndianInt32:&value32], @"The scanning of little endian uint32_t should fail and not throw an exception");
+    STAssertEquals([scanner scanLocation], (unsigned long long)4, @"The scan location should not have changed.");
+    STAssertEquals(value32, (uint32_t)0, @"The scanned value should have not changed.");
+    
+    [scanner setScanLocation:0];
+    STAssertFalseNoThrow([scanner scanBigEndianInt64:&value64], @"The scanning of little endian uint64_t should fail and not throw an exception");
+    STAssertEquals([scanner scanLocation], (unsigned long long)0, @"The scan location should not have changed.");
+    STAssertEquals(value64, (uint64_t)0, @"The scanned value should have not changed.");
+    
+    [scanner setScanLocation:0];
+    STAssertFalseNoThrow([scanner scanLittleEndianInt64:&value64], @"The scanning of little endian uint64_t should fail and not throw an exception");
+    STAssertEquals([scanner scanLocation], (unsigned long long)0, @"The scan location should not have changed.");
+    STAssertEquals(value64, (uint64_t)0, @"The scanned value should have not changed.");
 }
 
 - (void)testScanLittleEndianVarint32
 {
     NSData         *data = [NSData dataWithBytes:(uint8_t[2]){0x96, 0x01} length:2];
     PSYDataScanner *scanner = [PSYDataScanner scannerWithData:data];
-    uint32_t        scannedValue = 0;
+    uint32_t        valueVar32 = 0;
     
     NSMutableData *writtenData = [NSMutableData dataWithCapacity:2];
     [writtenData appendLittleEndianVarint32:150];
     
-    STAssertTrueNoThrow([scanner scanLittleEndianVarint32:&scannedValue], @"The scanning of little endian varint 32 should succeed and not throw an exception.");
+    STAssertTrueNoThrow([scanner scanLittleEndianVarint32:&valueVar32], @"The scanning of little endian varint 32 should succeed and not throw an exception.");
     
     STAssertEquals([scanner scanLocation], (unsigned long long)2, @"The scan location should have been advanced by 2.");
     
-    STAssertEquals(scannedValue, (uint32_t)150, @"The scanned value should be equal to the varint encoded integer in the data.");
+    STAssertEquals(valueVar32, (uint32_t)150, @"The scanned value should be equal to the varint encoded integer in the data.");
     
     STAssertEqualObjects(data, writtenData, @"The written data should be equal to the hand encoded data.");
 }
@@ -447,16 +274,16 @@
 {
     NSData         *data = [NSData dataWithBytes:(uint8_t[2]){0x96, 0x01} length:2];
     PSYDataScanner *scanner = [PSYDataScanner scannerWithData:data];
-    uint64_t        scannedValue = 0;
+    uint64_t        valueVar64 = 0;
     
     NSMutableData *writtenData = [NSMutableData dataWithCapacity:2];
     [writtenData appendLittleEndianVarint64:150];
     
-    STAssertTrueNoThrow([scanner scanLittleEndianVarint64:&scannedValue], @"The scanning of little endian varint 64 should succeed and not throw an exception.");
+    STAssertTrueNoThrow([scanner scanLittleEndianVarint64:&valueVar64], @"The scanning of little endian varint 64 should succeed and not throw an exception.");
     
     STAssertEquals([scanner scanLocation], (unsigned long long)2, @"The scan location should have been advanced by 2.");
     
-    STAssertEquals(scannedValue, (uint64_t)150, @"The scanned value should be equal to the varint encoded integer in the data.");
+    STAssertEquals(valueVar64, (uint64_t)150, @"The scanned value should be equal to the varint encoded integer in the data.");
     
     STAssertEqualObjects(data, writtenData, @"The written data should be equal to the hand encoded data.");
 }
@@ -465,16 +292,16 @@
 {
     NSData         *data = [NSData dataWithBytes:(uint8_t[5]){0x80, 0x80, 0x80, 0xB0, 0x09} length:5];
     PSYDataScanner *scanner = [PSYDataScanner scannerWithData:data];
-    uint32_t        scannedValue = 0;
+    uint32_t        valueVar64 = 0;
     
     NSMutableData *writtenData = [NSMutableData dataWithCapacity:5];
     [writtenData appendBigEndianVarint32:150];
     
-    STAssertTrueNoThrow([scanner scanBigEndianVarint32:&scannedValue], @"The scanning of big endian varint 32 should succeed and not throw an exception.");
+    STAssertTrueNoThrow([scanner scanBigEndianVarint32:&valueVar64], @"The scanning of big endian varint 32 should succeed and not throw an exception.");
     
     STAssertEquals([scanner scanLocation], (unsigned long long)5, @"The scan location should have been advanced by 5.");
     
-    STAssertEquals(scannedValue, (uint32_t)150, @"The scanned value should be equal to the varint encoded integer in the data.");
+    STAssertEquals(valueVar64, (uint32_t)150, @"The scanned value should be equal to the varint encoded integer in the data.");
     
     STAssertEqualObjects(data, writtenData, @"The written data should be equal to the hand encoded data.");
 }
@@ -483,16 +310,16 @@
 {
     NSData         *data = [NSData dataWithBytes:(uint8_t[10]){0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x96, 0x01} length:10];
     PSYDataScanner *scanner = [PSYDataScanner scannerWithData:data];
-    uint64_t        scannedValue = 0;
+    uint64_t        valueVar64 = 0;
     
     NSMutableData *writtenData = [NSMutableData dataWithCapacity:10];
     [writtenData appendBigEndianVarint64:150];
     
-    STAssertTrueNoThrow([scanner scanBigEndianVarint64:&scannedValue], @"The scanning of big endian varint 64 should succeed and not throw an exception.");
+    STAssertTrueNoThrow([scanner scanBigEndianVarint64:&valueVar64], @"The scanning of big endian varint 64 should succeed and not throw an exception.");
     
     STAssertEquals([scanner scanLocation], (unsigned long long)10, @"The scan location should have been advanced by 10.");
     
-    STAssertEquals(scannedValue, (uint64_t)150, @"The scanned value should be equal to the varint encoded integer in the data.");
+    STAssertEquals(valueVar64, (uint64_t)150, @"The scanned value should be equal to the varint encoded integer in the data.");
     
     STAssertEqualObjects(data, writtenData, @"The written data should be equal to the hand encoded data.");
 }
@@ -501,16 +328,16 @@
 {
     NSData         *data = [NSData dataWithBytes:(uint8_t[5]){0xEA, 0xFE, 0xFF, 0xFF, 0x0F} length:5];
     PSYDataScanner *scanner = [PSYDataScanner scannerWithData:data];
-    int32_t         scannedValue = 0;
+    int32_t         valueSVar32 = 0;
     
     NSMutableData *writtenData = [NSMutableData dataWithCapacity:5];
     [writtenData appendLittleEndianSVarint32:-150];
     
-    STAssertTrueNoThrow([scanner scanLittleEndianSVarint32:&scannedValue], @"The scanning of little endian signed varint 32 should succeed and not throw an exception.");
+    STAssertTrueNoThrow([scanner scanLittleEndianSVarint32:&valueSVar32], @"The scanning of little endian signed varint 32 should succeed and not throw an exception.");
     
     STAssertEquals([scanner scanLocation], (unsigned long long)5, @"The scan location should have been advanced by 5");
     
-    STAssertEquals(scannedValue, (int32_t)-150, @"The scanned value should be equal to the varint encoded integer in the data.");
+    STAssertEquals(valueSVar32, (int32_t)-150, @"The scanned value should be equal to the varint encoded integer in the data.");
     
     STAssertEqualObjects(data, writtenData, @"The written data should be equal to the hand encoded data.");
 }
@@ -519,16 +346,16 @@
 {
     NSData         *data = [NSData dataWithBytes:(uint8_t[10]){0xEA, 0xFE, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x01} length:10];
     PSYDataScanner *scanner = [PSYDataScanner scannerWithData:data];
-    int64_t         scannedValue = 0;
+    int64_t         valueSVar64 = 0;
     
     NSMutableData *writtenData = [NSMutableData dataWithCapacity:10];
     [writtenData appendLittleEndianSVarint64:-150];
     
-    STAssertTrueNoThrow([scanner scanLittleEndianSVarint64:&scannedValue], @"The scanning of little endian signed varint 64 should succeed and not throw an exception.");
+    STAssertTrueNoThrow([scanner scanLittleEndianSVarint64:&valueSVar64], @"The scanning of little endian signed varint 64 should succeed and not throw an exception.");
     
     STAssertEquals([scanner scanLocation], (unsigned long long)10, @"The scan location should have been advanced by 10.");
     
-    STAssertEquals(scannedValue, (int64_t)-150, @"The scanned value should be equal to the varint encoded integer in the data.");
+    STAssertEquals(valueSVar64, (int64_t)-150, @"The scanned value should be equal to the varint encoded integer in the data.");
     
     STAssertEqualObjects(data, writtenData, @"The written data should be equal to the hand encoded data.");
 }
